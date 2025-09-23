@@ -31,13 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NextTopLoader height={5} color="#22c55e"/>
         <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
         >
-            <NextTopLoader height={5}/>
             {children}
         </ThemeProvider>
       </body>
