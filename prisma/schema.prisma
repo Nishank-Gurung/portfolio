@@ -5,10 +5,138 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+    provider = "postgresql"
+}
+
+model User {
+    id       Int     @id @default(autoincrement())
+    name     String
+    email    String  @unique
+    password String
+    title    String?
+    image    String?
+    about    String?
+    phone    String?
+    address  String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    posts Post[]
+}
+
+model Project {
+    id          Int      @id @default(autoincrement())
+    title       String
+    slug        String   @unique
+    description String
+    image       String
+    url         String
+    techStack   String[]
+    isFeatured  Boolean  @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model SocialMedia {
+    id       Int    @id @default(autoincrement())
+    platform String
+    image    String
+    url      String
+    order    Int
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model WorkExperience {
+    id          Int       @id @default(autoincrement())
+    company     String
+    position    String
+    url         String?
+    skills      String[]
+    startDate   DateTime
+    endDate     DateTime?
+    isCurrent   Boolean   @default(false)
+    description String
+    type        WorkExperienceType
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+enum WorkExperienceType {
+    FULL_TIME
+    PART_TIME
+    FREELANCE
+    INTERNSHIP
+    CONTRACT
+}
+
+model Skill {
+    id       Int         @id @default(autoincrement())
+    name     String
+    level    SkillLevel?
+    image    String?
+    category String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum SkillLevel {
+    BEGINNER
+    INTERMEDIATE
+    ADVANCED
+    EXPERT
+}
+
+model Education {
+    id          Int       @id @default(autoincrement())
+    institution String
+    degree      String?
+    field       String?
+    startDate   DateTime
+    endDate     DateTime?
+    description String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Post {
+    id          Int     @id @default(autoincrement())
+    title       String
+    slug        String     @unique
+    excerpt     String?
+    content     String
+    coverImage  String?
+    status      PostStatus
+    publishedAt DateTime?
+    authorId    Int
+    author      User       @relation(fields: [authorId], references: [id])
+
+    seoTitle       String?
+    seoDescription String?
+
+    tag       String[]
+    category  String[]
+    postViews PostView[]
+}
+
+enum PostStatus {
+    DRAFT
+    PUBLISHED
+}
+
+model PostView {
+    id        Int      @id @default(autoincrement())
+    postId    Int
+    post      Post     @relation(fields: [postId], references: [id])
+    createdAt DateTime @default(now())
 }
