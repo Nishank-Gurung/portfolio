@@ -39,7 +39,7 @@ model Project {
     url         String
     techStack   String[]
     isFeatured  Boolean  @default(false)
-
+    category    String[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -104,7 +104,7 @@ model Education {
     startDate   DateTime
     endDate     DateTime?
     description String
-
+    isCurrent   Boolean   @default(false)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
