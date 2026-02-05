@@ -1,7 +1,9 @@
-import React from 'react'
+import ExperiencesPage from "@/components/admin/ExperiencesPage";
 
 export default function page() {
   return (
-    <div>page</div>
+    <div>
+        <ExperiencesPage />
+    </div>
   )
 }

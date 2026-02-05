@@ -1,7 +1,10 @@
-import React from 'react'
+import UserPage from "@/components/admin/UserPage";
+
 
 export default function page() {
   return (
-    <div>page</div>
+    <div>
+        <UserPage/>
+    </div>
   )
 }

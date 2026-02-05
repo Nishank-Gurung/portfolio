@@ -1,7 +1,10 @@
-import React from 'react'
+import SocialsPage from "@/components/admin/SocialsPage";
+
 
 export default function page() {
   return (
-    <div>page</div>
+    <div>
+        <SocialsPage/>
+    </div>
   )
 }

@@ -1,7 +1,10 @@
-import React from 'react'
+import SkillsPage from "@/components/admin/SkillsPage";
+
 
 export default function page() {
   return (
-    <div>page</div>
+    <div>
+        <SkillsPage/>
+    </div>
   )
 }

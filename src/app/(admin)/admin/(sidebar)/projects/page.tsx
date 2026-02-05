@@ -1,7 +1,10 @@
-import React from 'react'
+import ProjectsPage from "@/components/admin/ProjectsPage";
+
 
 export default function page() {
   return (
-    <div>page</div>
+    <div>
+        <ProjectsPage/>
+    </div>
   )
 }
