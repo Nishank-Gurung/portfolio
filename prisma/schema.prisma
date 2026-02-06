@@ -14,16 +14,16 @@ datasource db {
 }
 
 model User {
-    id       Int     @id @default(autoincrement())
-    name     String
-    email    String  @unique
-    password String
-    title    String?
-    image    String?
-    about    String?
-    phone    String?
-    address  String?
-
+    id        Int      @id @default(autoincrement())
+    name      String
+    email     String   @unique
+    password  String
+    title     String?
+    image     String?
+    about     String?
+    phone     String?
+    address   String?
+    role      String   @default("ADMIN")
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -40,8 +40,8 @@ model Project {
     techStack   String[]
     isFeatured  Boolean  @default(false)
     category    String[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }
 
 model SocialMedia {
@@ -56,20 +56,21 @@ model SocialMedia {
 }
 
 model WorkExperience {
-    id          Int       @id @default(autoincrement())
+    id          Int                @id @default(autoincrement())
     company     String
     position    String
     url         String?
     skills      String[]
     startDate   DateTime
     endDate     DateTime?
-    isCurrent   Boolean   @default(false)
+    isCurrent   Boolean            @default(false)
     description String
     type        WorkExperienceType
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
+
 enum WorkExperienceType {
     FULL_TIME
     PART_TIME
@@ -105,12 +106,12 @@ model Education {
     endDate     DateTime?
     description String
     isCurrent   Boolean   @default(false)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
 }
 
 model Post {
-    id          Int     @id @default(autoincrement())
+    id          Int        @id @default(autoincrement())
     title       String
     slug        String     @unique
     excerpt     String?
