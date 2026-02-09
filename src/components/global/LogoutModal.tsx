@@ -9,6 +9,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import LoadingButton from "../ui/loading-button";
+import { useTransition } from "react";
+import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import APIRequest from "@/lib/BackendReq";
+import { useRouter } from "next/navigation";
 
 type LogoutModalProps = {
     isOpen?: boolean;
@@ -16,6 +21,24 @@ type LogoutModalProps = {
 };
 
 export default function LogoutModal({isOpen, closeModal}: LogoutModalProps) {
+    const [isPending, startTransition] = useTransition();
+    const router = useRouter();
+    const logout = async () =>{
+        startTransition(async()=>{
+            try {
+                const res = await APIRequest.post("auth/logout")
+                 if (res.data.success) {
+                                     router.push("/admin");
+                                     showSuccessToast(res.data.message)
+                                 } else {
+                                     showErrorTost(res.data.message);
+                                 }   
+            } catch (error) {
+                showErrorTost(error)
+                
+            }
+        })
+    }
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
             <form>
@@ -37,7 +60,7 @@ export default function LogoutModal({isOpen, closeModal}: LogoutModalProps) {
                         <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button type="submit">Logout</Button>
+                        <LoadingButton loading={isPending} onClick={logout}>Logout</LoadingButton>
                     </DialogFooter>
                 </DialogContent>
             </form>
