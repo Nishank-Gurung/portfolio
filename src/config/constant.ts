@@ -7,9 +7,9 @@ import {
     IconUser,
 } from "@tabler/icons-react";
 
-export const TOKEN_NAME = "portfolio-token";
+export const TOKEN_NAME = "auth_token";
 
-export const ADMIN_DEFAULT_REDIRECT_URL = "/admin/dashboard";
+export const ADMIN_DEFAULT_REDIRECT_URL = "/admin/user";
 
 export interface SidebarNavLinks {
     title: string;
