@@ -4,6 +4,7 @@ export type user = {
     email: string;
     title?: string;
     image?: string;
+    fileId?: string;
     about?: string;
     phone?: string;
     address?: string;
@@ -18,6 +19,7 @@ export type project = {
     slug: string;
     description: string;
     image: string;
+    fileId: string;
     url: string;
     techStack: string[];
     isFeatured: boolean;
@@ -37,7 +39,7 @@ export type experience = {
     endDate: Date | null;
     description: string;
     isCurrent: boolean;
-    type: "FULL_TIME" | "INTERNSHIP" | "FREELANCE"|"CONTRACT"|"PART_TIME";
+    type: "FULL_TIME" | "INTERNSHIP" | "FREELANCE" | "CONTRACT" | "PART_TIME";
     createdAt: Date;
     updatedAt: Date;
 };
@@ -46,6 +48,7 @@ export type skill = {
     id: number;
     name: string;
     image?: string;
+    fileId?: string;
     category?: string;
     level?: "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "EXPERT";
     createdAt: Date;
@@ -57,6 +60,7 @@ export type socialMedia = {
     platform: string;
     url: string;
     image: string;
+    fileId: string;
     order: number;
     createdAt: Date;
     updatedAt: Date;
@@ -82,6 +86,7 @@ export type post = {
     excerpt?: string;
     content: string;
     coverImage?: string;
+    fileId?: string;
     status: "DRAFT" | "PUBLISHED";
     publishedAt: Date | null;
     authorId: number;
