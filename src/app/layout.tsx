@@ -32,7 +32,7 @@ export default function RootLayout({
             >
                 <NextTopLoader height={5} color="#658f50" />
                 <Providers>{children}</Providers>
-                <Toaster />
+                <Toaster closeButton />
             </body>
         </html>
     );
