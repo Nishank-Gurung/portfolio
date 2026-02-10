@@ -14,13 +14,11 @@ export type userSchemaType = z.infer<typeof userSchema>
 
 export const projectSchema = z.object({
     title: z.string(),
-    slug: z.string(),
     description: z.string(),
     image: z.instanceof(File),
     url: z.string(),
     techStack: z.array(z.string()),
     isFeatured: z.boolean(),
-    link: z.string(),
     category: z.array(z.string()),
 })
 export type projectSchemaType = z.infer<typeof projectSchema>
@@ -67,7 +65,6 @@ export type educationSchemaType = z.infer<typeof educationSchema>
 
 export const postSchema = z.object({
     title: z.string(),
-    slug: z.string(),
     excerpt: z.string().optional(),
     content: z.string(),
     image: z.instanceof(File).optional(),
