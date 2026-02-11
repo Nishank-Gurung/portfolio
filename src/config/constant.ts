@@ -49,4 +49,9 @@ export const AdminSideBarLinks: SidebarNavLinks[] = [
         icon: IconSocial,
         url: "/admin/socials",
     },
+    {
+        title: "GitPage",
+        icon: IconSocial,
+        url: "/admin/gitpage",
+    }
 ];
