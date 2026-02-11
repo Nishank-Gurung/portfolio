@@ -4,18 +4,18 @@ export const userSchema = z.object({
     name: z.string(),
     email: z.email(),
     title: z.string().optional(),
-    image: z.string().optional(),
+    image: z.file().optional(),
     about: z.string().optional(),
     phone: z.string().optional(),
     address: z.string().optional(),
-    password: z.string(),
+    password: z.string().optional(),
 })
 export type userSchemaType = z.infer<typeof userSchema>
 
 export const projectSchema = z.object({
     title: z.string(),
     description: z.string(),
-    image: z.instanceof(File),
+    image: z.instanceof(File).optional(),
     url: z.string(),
     techStack: z.array(z.string()),
     isFeatured: z.boolean(),
