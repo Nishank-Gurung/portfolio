@@ -94,6 +94,7 @@ export async function PUT(
                     url: data.url,
                     image: imageUrl,
                     fileId: fileId,
+                    order: data.order
                 },
             });
             return updated;
