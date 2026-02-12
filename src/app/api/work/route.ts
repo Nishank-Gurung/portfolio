@@ -13,7 +13,7 @@ export async function GET() {
             {
                 message: "Work Experience retrieved successfully",
                 success: true,
-                works,
+                work:works,
             },
             {
                 status: 200,
