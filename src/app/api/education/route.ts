@@ -14,7 +14,7 @@ export async function GET() {
             {
                 message: "Educations retrieved successfully",
                 success: true,
-                educations,
+                education:educations,
             },
             {
                 status: 200,
