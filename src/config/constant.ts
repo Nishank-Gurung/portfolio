@@ -5,6 +5,8 @@ import {
     IconTools,
     IconFolderRoot,
     IconUser,
+    IconBook,
+    IconArticle,
 } from "@tabler/icons-react";
 
 export const TOKEN_NAME = "auth_token";
@@ -37,7 +39,11 @@ export const AdminSideBarLinks: SidebarNavLinks[] = [
         icon: IconStar,
         url: "/admin/experiences",
     },
-
+    {
+        title: "Education",
+        icon: IconBook,
+        url: "/admin/education",
+    },
     {
         title: "Skills",
         icon: IconTools,
@@ -48,6 +54,11 @@ export const AdminSideBarLinks: SidebarNavLinks[] = [
         title: "Socials",
         icon: IconSocial,
         url: "/admin/socials",
+    },
+        {
+        title: "Blog",
+        icon: IconArticle,
+        url: "/admin/blog",
     },
     {
         title: "GitPage",
