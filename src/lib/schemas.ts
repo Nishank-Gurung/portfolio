@@ -18,7 +18,7 @@ export const projectSchema = z.object({
     image: z.instanceof(File).optional(),
     url: z.string(),
     techStack: z.array(z.string()),
-    isFeatured: z.boolean(),
+    isFeatured: z.coerce.boolean(),
     category: z.array(z.string()),
 })
 export type projectSchemaType = z.infer<typeof projectSchema>
@@ -28,10 +28,10 @@ export const experienceSchema = z.object({
     position: z.string(),
     url: z.string().optional(),
     skills: z.array(z.string()),
-    startDate: z.date(),
-    endDate: z.date().nullable(),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().nullable(),
     description: z.string(),
-    isCurrent: z.boolean(),
+    isCurrent: z.coerce.boolean(),
     type: z.enum(["FULL_TIME", "INTERNSHIP", "FREELANCE","CONTRACT","PART_TIME"]),
 })
 export type experienceSchemaType = z.infer<typeof experienceSchema>
@@ -48,7 +48,7 @@ export const socialMediaSchema = z.object({
     platform: z.string(),
     url: z.string(),
     image: z.instanceof(File).optional(),
-    order: z.number(),
+    order: z.coerce.number(),
 })
 export type socialMediaSchemaType = z.infer<typeof socialMediaSchema>
 
@@ -56,10 +56,10 @@ export const educationSchema = z.object({
     institution: z.string(),
     degree: z.string(),
     fieldOfStudy: z.string(),
-    startDate: z.date(),
-    endDate: z.date().nullable(),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().nullable(),
     description: z.string(),
-    isCurrent: z.boolean(),
+    isCurrent: z.coerce.boolean(),
 })
 export type educationSchemaType = z.infer<typeof educationSchema>
 
