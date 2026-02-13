@@ -26,7 +26,7 @@ export default function LogoutModal({isOpen, closeModal}: LogoutModalProps) {
     const logout = async () =>{
         startTransition(async()=>{
             try {
-                const res = await APIRequest.post("auth/logout")
+                const res = await APIRequest.post("/api/auth/logout")
                  if (res.data.success) {
                                      router.push("/admin");
                                      showSuccessToast(res.data.message)
