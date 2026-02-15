@@ -17,6 +17,7 @@ import APIRequest from "@/lib/BackendReq";
 import { useRouter } from "next/navigation";
 import { ADMIN_DEFAULT_REDIRECT_URL } from "@/config/constant";
 import { PasswordInput } from "../ui/input-password";
+import { Card } from "../ui/card";
 
 export default function AdminLoginForm() {
     const [isPending, startTransition] = useTransition();
@@ -47,16 +48,19 @@ export default function AdminLoginForm() {
                 const formData = new FormData();
                 formData.append("email", data.email);
                 formData.append("password", data.password);
-                const response = await APIRequest.post("auth/login", formData);
+                const response = await APIRequest.post(
+                    "api/auth/login",
+                    formData,
+                );
                 if (response.data.success) {
-                    router.push(ADMIN_DEFAULT_REDIRECT_URL);
                     showSuccessToast(response.data.message);
+                    router.push(ADMIN_DEFAULT_REDIRECT_URL);
                 } else {
                     showErrorTost(response.data.message);
                 }
             } catch (error) {
                 console.log(error);
-                // showErrorTost(error);
+                showErrorTost(error);
             }
         });
     }
