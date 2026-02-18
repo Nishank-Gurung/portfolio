@@ -5,10 +5,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const socialId = Number(params.id);
+        const socialId = Number((await params).slug);
         const social = await prisma.socialMedia.findUnique({
             where: { id: socialId },
         });
@@ -33,13 +33,13 @@ export async function GET(
         );
     }
 }
-export async function PUT(
+export async function POST(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     let newUploadedFileId: string | null = null;
     try {
-        const socialId = Number(params.id);
+        const socialId = Number((await params).slug);
         const existingSocial = await prisma.socialMedia.findUnique({
             where: { id: socialId },
         });
@@ -138,10 +138,10 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
      try {
-        const socialId = Number(params.id);
+        const socialId = Number((await params).slug);
 
         const existingSocial = await prisma.socialMedia.findUnique({
             where: { id: socialId },
