@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const skillId = Number(params.id);
+        const skillId = Number((await params).slug);
         const skill = await prisma.skill.findUnique({
             where: { id: skillId },
         });
@@ -34,14 +34,14 @@ export async function GET(
     }
 }
 
-export async function PUT(
+export async function POST(
     req: Request,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     let newUploadedFileId: string | null = null;
 
     try {
-        const skillId = Number(params.id);
+        const skillId = Number((await params).slug);
         const existingSkill = await prisma.skill.findUnique({
             where: { id: skillId },
         });
@@ -122,10 +122,10 @@ export async function PUT(
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const skillId = Number(params.id);
+        const skillId = Number((await params).slug);
         const existingSkill = await prisma.skill.findUnique({
             where: { id: skillId },
         });
