@@ -66,22 +66,22 @@ export function ProjectForm({ project }: { project?: project }) {
                 formData.append("description", data.description);
                 formData.append("url", data.url);
                 formData.append("isFeatured", String(data.isFeatured));
-                data.techStack.forEach((tech, index) => {
-                    formData.append(`techStack[${index}]`, tech);
-                });
-                data.category.forEach((cat, index) => {
-                    formData.append(`category[${index}]`, cat);
-                });
+
+                    formData.append(`techStack`, JSON.stringify(data.techStack));
+
+
+                    formData.append(`category`, JSON.stringify(data.category));
+
                 if (data.image) {
                     formData.append("image", data.image);
                 }
                 const response = await APIRequest.post(
-                    project ? `api/projects/${project.id}` : "api/projects",
+                    project ? `api/project/${project.id}` : "api/project",
                     formData,
                 );
                 if (response.data.success) {
                     showSuccessToast(response.data.message);
-                    router.push("/admin/project");
+                    router.push("/admin/projects");
                 } else {
                     showErrorTost(response.data.message);
                 }
@@ -97,7 +97,9 @@ export function ProjectForm({ project }: { project?: project }) {
             <CardHeader>
                 <CardTitle className="text-foreground">Project</CardTitle>
                 <CardDescription>
-                    Add a new project to your portfolio.
+                    {project?.id
+                        ? `Edit project #${project.title}`
+                        : "Add a new project to your portfolio."}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -233,7 +235,9 @@ export function ProjectForm({ project }: { project?: project }) {
                         >
                             Reset
                         </Button>
-                        <LoadingButton loading={isPending} type="submit">Save Project</LoadingButton>
+                        <LoadingButton loading={isPending} type="submit">
+                            Save Project
+                        </LoadingButton>
                     </div>
                 </form>
             </CardContent>

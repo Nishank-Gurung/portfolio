@@ -65,7 +65,7 @@ export function SkillForm({ skill }: { skill?: skill }) {
                 if (data.category) formData.append("category", data.category);
                 if (data.level) formData.append("level", data.level);
                 if (data.image) formData.append("image", data.image);
-                const response = await APIRequest.post("api/skill", formData);
+                const response = await APIRequest.post(skill ? `api/skill/${skill.id}` : "api/skill", formData);
                 if (response.data.success) {
                     showSuccessToast(response.data.message);
                     router.push("/admin/skills");
@@ -84,7 +84,7 @@ export function SkillForm({ skill }: { skill?: skill }) {
             <CardHeader>
                 <CardTitle className="text-foreground">Skill</CardTitle>
                 <CardDescription>
-                    Add a new skill to your profile.
+                    {skill?.id ? `Edit skill #${skill.name}` : "Add a new skill to your profile."}
                 </CardDescription>
             </CardHeader>
             <CardContent>

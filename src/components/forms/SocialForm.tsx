@@ -61,7 +61,9 @@ export function SocialMediaForm({
                 formData.append("order", data.order.toString());
                 if (data.image) formData.append("image", data.image);
                 const response = await APIRequest.post(
-                    "api/social",
+                    socialMedia
+                        ? `api/social/${socialMedia.id}`
+                        : "api/social",
                     formData,
                 );
                 if (response.data.success) {
@@ -82,7 +84,9 @@ export function SocialMediaForm({
             <CardHeader>
                 <CardTitle className="text-foreground">Social Media</CardTitle>
                 <CardDescription>
-                    Add a social media link to your profile.
+                    {socialMedia?.id
+                        ? `Edit social media link #${socialMedia.platform}`
+                        : "Add a social media link to your profile."}
                 </CardDescription>
             </CardHeader>
             <CardContent>

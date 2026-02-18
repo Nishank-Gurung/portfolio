@@ -86,7 +86,7 @@ export function UserForm({ user }: { user?: user }) {
             <CardHeader>
                 <CardTitle className="text-foreground">User Profile</CardTitle>
                 <CardDescription>
-                    Manage your personal information and account settings.
+                   {user?.id ? `Edit user profile #${user.name}` : "Manage your personal information and account settings."}
                 </CardDescription>
             </CardHeader>
             <CardContent>

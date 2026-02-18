@@ -92,10 +92,7 @@ export function BlogForm({ blogPost }: { blogPost?: post }) {
                 formData.append("seoTitle", data.seoTitle ?? "");
                 formData.append("seoDescription", data.seoDescription ?? "");
                 formData.append("tag", JSON.stringify(data.tag));
-                formData.append(
-                    "category",
-                    JSON.stringify(data.category),
-                );
+                formData.append("category", JSON.stringify(data.category));
                 if (data.image) {
                     formData.append("image", data.image);
                 }
@@ -121,7 +118,7 @@ export function BlogForm({ blogPost }: { blogPost?: post }) {
         <Card>
             <CardHeader>
                 <CardTitle className="text-foreground">Blog Post</CardTitle>
-                <CardDescription>Create or edit a blog post.</CardDescription>
+                <CardDescription>{blogPost?.id ? `Edit blog post #${blogPost.title}` : "Create a new blog post."}</CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -257,6 +254,7 @@ export function BlogForm({ blogPost }: { blogPost?: post }) {
                                                 >
                                                     <Calendar
                                                         mode="single"
+                                                        captionLayout="dropdown"
                                                         selected={
                                                             field.value ??
                                                             undefined

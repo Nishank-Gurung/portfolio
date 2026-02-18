@@ -1,3 +1,4 @@
+"use client";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
@@ -40,6 +41,7 @@ import { experience } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import LoadingButton from "../ui/loading-button";
 import APIRequest from "@/lib/BackendReq";
+import { form } from "motion/react-client";
 
 const employmentTypes = [
     "FULL_TIME",
@@ -57,7 +59,7 @@ const typeLabels: Record<string, string> = {
     PART_TIME: "Part Time",
 };
 export default function WorkForm({ experience }: { experience?: experience }) {
-    const [isCurrent, setIsCurrent] = useState(false);
+    const [isCurrent, setIsCurrent] = useState(experience?.isCurrent || false);
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
     const {
@@ -106,7 +108,7 @@ export default function WorkForm({ experience }: { experience?: experience }) {
                 );
                 if (response.data.success) {
                     showSuccessToast(response.data.message);
-                    router.push("/admin/experience");
+                    router.push("/admin/experiences");
                 } else {
                     showErrorTost(response.data.message);
                 }
@@ -120,7 +122,7 @@ export default function WorkForm({ experience }: { experience?: experience }) {
         <Card>
             <CardHeader>
                 <CardTitle className="text-foreground">Experience</CardTitle>
-                <CardDescription>Add a work experience entry.</CardDescription>
+                <CardDescription>{experience?.id ? `Edit work experience entry #${experience.company}` : "Add a work experience entry."}</CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -247,6 +249,7 @@ export default function WorkForm({ experience }: { experience?: experience }) {
                                                 >
                                                     <Calendar
                                                         mode="single"
+                                                        captionLayout="dropdown"
                                                         selected={field.value}
                                                         onSelect={
                                                             field.onChange
@@ -297,6 +300,7 @@ export default function WorkForm({ experience }: { experience?: experience }) {
                                                 >
                                                     <Calendar
                                                         mode="single"
+                                                        captionLayout="dropdown"
                                                         selected={
                                                             field.value ??
                                                             undefined

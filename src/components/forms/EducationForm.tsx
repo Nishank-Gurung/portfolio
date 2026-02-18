@@ -56,7 +56,7 @@ export function EducationForm({ education }: { education?: education }) {
         defaultValues: {
             institution: education?.institution || "",
             degree: education?.degree || "",
-            fieldOfStudy: education?.fieldOfStudy || "",
+            fieldOfStudy: education?.field || "",
             description: education?.description || "",
             isCurrent: education?.isCurrent || false,
             startDate: education?.startDate || new Date(),
@@ -103,7 +103,7 @@ export function EducationForm({ education }: { education?: education }) {
             <CardHeader>
                 <CardTitle className="text-foreground">Education</CardTitle>
                 <CardDescription>
-                    Add an education entry to your profile.
+                    {education?.id ? `Edit education entry #${education.institution}` : "Add an education entry to your profile."}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -195,6 +195,7 @@ export function EducationForm({ education }: { education?: education }) {
                                                 >
                                                     <Calendar
                                                         mode="single"
+                                                        captionLayout="dropdown"
                                                         selected={field.value}
                                                         onSelect={
                                                             field.onChange
@@ -245,6 +246,7 @@ export function EducationForm({ education }: { education?: education }) {
                                                 >
                                                     <Calendar
                                                         mode="single"
+                                                        captionLayout="dropdown"
                                                         selected={
                                                             field.value ??
                                                             undefined
