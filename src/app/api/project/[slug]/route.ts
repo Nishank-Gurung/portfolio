@@ -6,10 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const projectId = Number(params.id);
+        const projectId = Number((await params).slug);
         const project = await prisma.project.findUnique({
             where: { id: projectId },
         });
@@ -34,14 +34,14 @@ export async function GET(
         );
     }
 }
-export async function PUT(
+export async function POST(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     let newUploadedFileId: string | null = null;
 
     try {
-        const projectId = Number(params.id);
+        const projectId = Number((await params).slug);
 
         const existingProject = await prisma.project.findUnique({
             where: { id: projectId },
@@ -58,6 +58,7 @@ export async function PUT(
         const rawData = {
             ...Object.fromEntries(formData.entries()),
             techStack: JSON.parse(formData.get("techStack") as string),
+            category: JSON.parse(formData.get("category") as string),          
         };
 
         const result = projectSchema.safeParse(rawData);
@@ -153,10 +154,10 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const projectId = Number(params.id);
+        const projectId = Number((await params).slug);
 
         const existingProject = await prisma.project.findUnique({
             where: { id: projectId },

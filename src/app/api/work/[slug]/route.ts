@@ -1,14 +1,14 @@
 import prisma from "@/lib/db";
 import { imagekit } from "@/lib/imagekit";
-import { educationSchema } from "@/lib/schemas";
+import { experienceSchema } from "@/lib/schemas";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const workId = Number(params.id);
+        const workId = Number((await params).slug);
         const work = await prisma.workExperience.findUnique({
             where: { id: workId },
         });
@@ -33,12 +33,12 @@ export async function GET(
         );
     }
 }
-export async function PUT(
+export async function POST(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const workId = Number(params.id);
+        const workId = Number((await params).slug);
 
         const existingWork = await prisma.workExperience.findUnique({
             where: { id: workId },
@@ -52,12 +52,13 @@ export async function PUT(
         }
 
         const formData = await req.formData();
+        console.log("formData", formData);
         const rawData = {
             ...Object.fromEntries(formData.entries()),
             skills: JSON.parse(formData.get("skills") as string),
         };
-
-        const result = educationSchema.safeParse(rawData);
+        console.log("rawData", rawData)
+        const result = experienceSchema.safeParse(rawData);
 
         if (!result.success) {
             return NextResponse.json(
@@ -71,7 +72,7 @@ export async function PUT(
         }
 
         const data = result.data;
-
+        console.log("daa",data)
         const updatedWork = await prisma.$transaction(async (tx) => {
             const updated = await tx.workExperience.update({
                 where: { id: workId },
@@ -102,10 +103,10 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const workId = Number(params.id);
+        const workId = Number((await params).slug);
 
         const existingWork = await prisma.workExperience.findUnique({
             where: { id: workId },

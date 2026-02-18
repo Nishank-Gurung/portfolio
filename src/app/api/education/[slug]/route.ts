@@ -5,10 +5,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const educationId = Number(params.id);
+        const educationId = Number((await params).slug);
+        if (!educationId) {
+            return NextResponse.json(
+                { message: "Invalid ID" },
+                { status: 400 },
+            );
+        }
         const education = await prisma.education.findUnique({
             where: { id: educationId },
         });
@@ -20,7 +26,11 @@ export async function GET(
             );
         }
 
-        return NextResponse.json({ success: true, education:education, message:"Education fetched successfully" });
+        return NextResponse.json({
+            success: true,
+            education: education,
+            message: "Education fetched successfully",
+        });
     } catch (error) {
         console.error("Fetch error:", error);
         return NextResponse.json(
@@ -33,12 +43,12 @@ export async function GET(
         );
     }
 }
-export async function PUT(
+export async function POST(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const educationId = Number(params.id);
+        const educationId = Number((await params).slug);
 
         const existingEducation = await prisma.education.findUnique({
             where: { id: educationId },
@@ -50,7 +60,6 @@ export async function PUT(
                 { status: 404 },
             );
         }
-
 
         const formData = await req.formData();
         const rawData = Object.fromEntries(formData.entries());
@@ -101,10 +110,10 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const educationId = Number(params.id);
+        const educationId = Number((await params).slug);
 
         const existingEducation = await prisma.education.findUnique({
             where: { id: educationId },

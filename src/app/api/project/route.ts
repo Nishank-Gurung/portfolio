@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
         const rawData = {
             ...Object.fromEntries(formData.entries()),
             techStack: JSON.parse(formData.get("techStack") as string),
+            category: JSON.parse(formData.get("category") as string),
+
         };
         const result = projectSchema.safeParse(rawData);
 
