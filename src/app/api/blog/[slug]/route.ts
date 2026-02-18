@@ -6,10 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const blogId = Number(params.id);
+        const blogId = Number((await params).slug);
         const blog = await prisma.post.findUnique({
             where: { id: blogId },
         });
@@ -34,14 +34,14 @@ export async function GET(
         );
     }
 }
-export async function PUT(
+export async function POST(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     let newUploadedFileId: string | null = null;
 
     try {
-        const blogId = Number(params.id);
+        const blogId = Number((await params).slug);
 
         const existingBlog = await prisma.post.findUnique({
             where: { id: blogId },
@@ -145,10 +145,10 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } },
+    { params }: { params: Promise<{ slug: string }> },
 ) {
     try {
-        const blogId = Number(params.id);
+        const blogId = Number((await params).slug);
 
         const existingBlog = await prisma.post.findUnique({
             where: { id: blogId },

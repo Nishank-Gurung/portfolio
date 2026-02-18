@@ -6,6 +6,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
     try {
+        const blogs = await prisma.post.findMany({
+            include:{
+                postViews: true,
+            }
+        })
+        return NextResponse.json({
+            success: true,
+            message: "Blogs fetched successfully",
+            blog: blogs,
+        });
     } catch (e) {
         console.error("Error creating event:", e);
         return NextResponse.json({
