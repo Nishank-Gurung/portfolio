@@ -70,7 +70,7 @@ export type education = {
     id: number;
     institution: string;
     degree: string;
-    fieldOfStudy: string;
+    field: string;
     startDate: Date;
     endDate: Date | null;
     description: string;
