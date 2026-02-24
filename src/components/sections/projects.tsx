@@ -12,22 +12,76 @@ import {
 } from "@tabler/icons-react";
 import { project } from "@/lib/types";
 import { useQueryGetProjects } from "@/hooks/query-hooks/useQueryGetProjects";
+import { Skeleton } from "../ui/skeleton";
 
 export function ProjectsSection() {
     const { data: projects, isLoading } = useQueryGetProjects();
 
     if (isLoading || !projects?.data?.project) {
         return (
-            <div className="min-h-dvh flex items-center justify-center">
-                Loading...
-            </div>
+            <section className="px-6 py-24">
+                <div className="mx-auto max-w-4xl">
+                    {/* Section Heading Skeleton */}
+                    <div className="mb-12">
+                        <Skeleton className="h-10 w-40 mb-2" />
+                        <Skeleton className="h-5 w-64" />
+                    </div>
+
+                    {/* Grid Layout */}
+                    <div className="grid gap-6 md:grid-cols-2">
+                        {/* Generating 4 Project Cards */}
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="flex flex-col rounded-xl border border-border bg-card overflow-hidden"
+                            >
+                                {/* Image Placeholder (h-48 to match your original code) */}
+                                <Skeleton className="h-48 w-full rounded-none" />
+
+                                <div className="flex flex-col p-6">
+                                    <div className="mb-4 flex items-start justify-between">
+                                        {/* Category Badges */}
+                                        <div className="flex flex-wrap gap-1.5">
+                                            <Skeleton className="h-5 w-16 rounded-full" />
+                                            <Skeleton className="h-5 w-20 rounded-full" />
+                                        </div>
+
+                                        {/* Action Icon Buttons */}
+                                        <div className="flex items-center gap-1">
+                                            <Skeleton className="size-8 rounded-md" />
+                                            <Skeleton className="size-8 rounded-md" />
+                                        </div>
+                                    </div>
+
+                                    {/* Project Title */}
+                                    <Skeleton className="mb-2 h-7 w-3/4" />
+
+                                    {/* Description Paragraph */}
+                                    <div className="mb-4 space-y-2">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-[90%]" />
+                                        <Skeleton className="h-4 w-[60%]" />
+                                    </div>
+
+                                    {/* Tech Stack Badges */}
+                                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                                        <Skeleton className="h-5 w-12" />
+                                        <Skeleton className="h-5 w-14" />
+                                        <Skeleton className="h-5 w-16" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
         );
     }
 
     const featured: project[] = projects.data.project || [];
     return (
         <section id="projects" className="px-6 py-24">
-            <div className="mx-auto max-w-5xl">
+            <div className="mx-auto max-w-4xl">
                 <SectionHeading
                     title="Projects"
                     description="A selection of things I've built."
