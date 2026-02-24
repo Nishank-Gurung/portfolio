@@ -2,16 +2,21 @@ import { socialMedia } from "@/lib/types";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import Image from "next/image";
-import { IconBrandGithub, IconBrandLinkedin, IconBrandTwitter, IconMail } from "@tabler/icons-react";
+import {
+    IconBrandGithub,
+    IconBrandLinkedin,
+    IconBrandTwitter,
+    IconMail,
+} from "@tabler/icons-react";
 
 const iconMap: Record<string, React.ElementType> = {
-  GitHub: IconBrandGithub,
-  LinkedIn: IconBrandLinkedin,
-  X: IconBrandTwitter,
-  Email: IconMail,
+    GitHub: IconBrandGithub,
+    LinkedIn: IconBrandLinkedin,
+    X: IconBrandTwitter,
+    Email: IconMail,
 };
 export function SocialIcon({ social }: { social: socialMedia }) {
-      const Icon = iconMap[social.platform] || IconMail;
+    const Icon = iconMap[social.platform] || IconMail;
 
     return (
         <Tooltip>
@@ -29,7 +34,14 @@ export function SocialIcon({ social }: { social: socialMedia }) {
                         }
                         aria-label={social.platform}
                     >
-                        <Icon className="size-4" />
+                        <Icon className="size-6" />
+                        {/* <Image
+                            src={social.image}
+                            alt={social.platform}
+                            width={28}
+                            height={28}
+                            className="size-7 object-contain invert-100"
+                        /> */}
                         {/* <img
                             src={social.image}
                             alt={social.platform}
