@@ -1,5 +1,5 @@
 "use client";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, Resolver, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
     Card,
@@ -41,7 +41,6 @@ import { experience } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import LoadingButton from "../ui/loading-button";
 import APIRequest from "@/lib/BackendReq";
-import { form } from "motion/react-client";
 
 const employmentTypes = [
     "FULL_TIME",
@@ -59,7 +58,7 @@ const typeLabels: Record<string, string> = {
     PART_TIME: "Part Time",
 };
 export default function WorkForm({ experience }: { experience?: experience }) {
-    const [isCurrent, setIsCurrent] = useState(experience?.isCurrent || false);
+    const [isCurrent, setIsCurrent] = useState(experience?.isCurrent ?? false);
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
     const {
@@ -71,17 +70,17 @@ export default function WorkForm({ experience }: { experience?: experience }) {
         control,
         formState: { errors },
     } = useForm<experienceSchemaType>({
-        resolver: zodResolver(experienceSchema),
+        resolver: zodResolver(experienceSchema) as Resolver<experienceSchemaType>,
         defaultValues: {
-            company: experience?.company || "",
-            position: experience?.position || "",
-            url: experience?.url || "",
-            skills: experience?.skills || [],
-            description: experience?.description || "",
-            type: experience?.type || "FULL_TIME",
-            isCurrent: experience?.isCurrent || false,
-            startDate: experience?.startDate || new Date(),
-            endDate: experience?.endDate || null,
+            company: experience?.company ?? "",
+            position: experience?.position ?? "",
+            url: experience?.url ?? "",
+            skills: experience?.skills ?? [],
+            description: experience?.description ?? "",
+            type: experience?.type ?? "FULL_TIME",
+            isCurrent: experience?.isCurrent ?? false,
+            startDate: experience?.startDate ?? new Date(),
+            endDate: experience?.endDate ?? null,
         },
     });
     // const isCurrent = watch("isCurrent");
