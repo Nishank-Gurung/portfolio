@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 import { socialMediaSchema, type socialMediaSchemaType } from "@/lib/schemas";
 import {
     Field,
@@ -43,7 +43,7 @@ export function SocialMediaForm({
         reset,
         formState: { errors },
     } = useForm<socialMediaSchemaType>({
-        resolver: zodResolver(socialMediaSchema),
+        resolver: zodResolver(socialMediaSchema) as Resolver<socialMediaSchemaType>,
         defaultValues: {
             platform: socialMedia?.platform ?? "",
             url: socialMedia?.url ?? "",
