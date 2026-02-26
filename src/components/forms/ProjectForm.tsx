@@ -1,7 +1,7 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { projectSchema, type projectSchemaType } from "@/lib/schemas";
+import { Resolver, useForm } from "react-hook-form";
+import { projectSchema, projectSchemaType } from "@/lib/schemas";
 import {
     Field,
     FieldDescription,
@@ -45,7 +45,7 @@ export function ProjectForm({ project }: { project?: project }) {
         reset,
         formState: { errors },
     } = useForm<projectSchemaType>({
-        resolver: zodResolver(projectSchema),
+        resolver: zodResolver(projectSchema) as Resolver<projectSchemaType>,
         defaultValues: {
             title: project?.title ?? "",
             description: project?.description ?? "",
@@ -75,6 +75,7 @@ export function ProjectForm({ project }: { project?: project }) {
                 if (data.image) {
                     formData.append("image", data.image);
                 }
+                console.log(formData)
                 const response = await APIRequest.post(
                     project ? `api/project/${project.id}` : "api/project",
                     formData,
