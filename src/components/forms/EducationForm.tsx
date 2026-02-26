@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, Resolver } from "react-hook-form";
 import { educationSchema, type educationSchemaType } from "@/lib/schemas";
 import { format } from "date-fns";
 import {
@@ -52,15 +52,15 @@ export function EducationForm({ education }: { education?: education }) {
         control,
         formState: { errors },
     } = useForm<educationSchemaType>({
-        resolver: zodResolver(educationSchema),
+        resolver: zodResolver(educationSchema) as Resolver<educationSchemaType>,
         defaultValues: {
-            institution: education?.institution || "",
-            degree: education?.degree || "",
-            fieldOfStudy: education?.field || "",
-            description: education?.description || "",
-            isCurrent: education?.isCurrent || false,
-            startDate: education?.startDate || new Date(),
-            endDate: education?.endDate || null,
+            institution: education?.institution ?? "",
+            degree: education?.degree ?? "",
+            fieldOfStudy: education?.field ?? "",
+            description: education?.description ?? "",
+            isCurrent: education?.isCurrent ?? false,
+            startDate: education?.startDate ?? new Date(),
+            endDate: education?.endDate ?? null,
         },
     });
 
