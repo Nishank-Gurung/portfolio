@@ -1,7 +1,7 @@
 import WorkForm from "@/components/forms/WorkForm";
-import APIRequest from "@/lib/BackendReq";
-import { experience } from "@/lib/types";
-import { redirect } from "next/navigation";
+import { getWorkById } from "@/data-access/work-data-access";
+import { WorkExperience } from "@/generated/prisma/client";
+import { notFound } from "next/navigation";
 
 interface PageProps {
     searchParams: Promise<{
@@ -20,22 +20,15 @@ export default function page({ searchParams }: PageProps) {
 const WorkPage = async ({ searchParams }: PageProps) => {
     const { id } = await searchParams;
 
-    if (!id) {
-        return <WorkForm />;
-    }
-
-    let experience: experience;
-    try {
-        const res = await APIRequest.get(`/api/work/${id}`);
-        if (res.data.success) {
-            experience = res.data.work;
-        } else {
-            console.error("Failed to fetch experience data:", res.data);
-            redirect(`/admin/experience?error=${encodeURIComponent('Something went wrong')}`);
+    
+    let experience: WorkExperience | null = null;
+    
+    if (id) {
+        experience = await getWorkById(Number(id));
+        if (!experience) {
+            notFound();
+        
         }
-    } catch (error) {
-        console.error("Failed to fetch experience data:", error);
-        redirect(`/admin/experience?error=${encodeURIComponent('Something went wrong')}`);
     }
     return (
         <div>

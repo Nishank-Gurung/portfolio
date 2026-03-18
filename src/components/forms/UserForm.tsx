@@ -24,15 +24,14 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { user } from "@/lib/types";
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import LoadingButton from "../ui/loading-button";
-import APIRequest from "@/lib/BackendReq";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import { User } from "@/generated/prisma/client";
+import { useUserMutation } from "@/hooks/mutation-hooks/user-mutation";
+import { useRouter } from "next/navigation";
 
-export function UserForm({ user }: { user?: user }) {
-    const [isPending, startTransition] = useTransition();
+export function UserForm({ user }: { user?: User | null }) {
+    const { updateUserMutation } = useUserMutation();
+    const isPending = updateUserMutation.isPending;
     const router = useRouter();
     const {
         register,
@@ -55,30 +54,8 @@ export function UserForm({ user }: { user?: user }) {
     });
 
     function onSubmit(data: userSchemaType) {
-        console.log(data)
-        startTransition(async () => {
-            try {
-                const formData = new FormData();
-                formData.append("name", data.name);
-                formData.append("email", data.email);
-                if (data.title) formData.append("title", data.title);
-                if (data.about) formData.append("about", data.about);
-                if (data.phone) formData.append("phone", data.phone);
-                if (data.address) formData.append("address", data.address);
-                if (data.password) formData.append("password", data.password);
-                if (data.image) formData.append("image", data.image);
-                const response = await APIRequest.post("api/user", formData);
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push("/admin/user");
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+        updateUserMutation.mutate(data);
+        router.push("/admin/user");
     }
 
     return (

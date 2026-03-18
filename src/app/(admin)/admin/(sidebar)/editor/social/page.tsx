@@ -1,8 +1,7 @@
 import { SocialMediaForm } from "@/components/forms/SocialForm";
-import APIRequest from "@/lib/BackendReq";
-import { socialMedia } from "@/lib/types";
-import axios from "axios";
-import { redirect } from "next/navigation";
+import { getSocialById } from "@/data-access/social-data-access";
+import { SocialMedia } from "@/generated/prisma/client";
+import { notFound } from "next/navigation";
 
 interface PageProps {
     searchParams: Promise<{
@@ -20,23 +19,17 @@ export default function page({ searchParams }: PageProps) {
 const SocialMediaPage = async ({ searchParams }: PageProps) => {
     const { id } = await searchParams;
 
-    if (!id) {
-        return <SocialMediaForm />;
+    
+    let socialMedia: SocialMedia| null = null;
+    
+    
+    if (id) {
+      socialMedia = await getSocialById(Number(id));
+      if (!socialMedia) {
+        notFound()
+      }
     }
-
-    let socialMedia: socialMedia;
-    try {
-        const res = await APIRequest.get(`/api/social/${id}`);
-        if (res.data.success) {
-            socialMedia = res.data.social;
-        } else {
-            console.error("Failed to fetch social media data:", res.data);
-            redirect(`/admin/social?error=${encodeURIComponent('Something went wrong')}`);
-        }
-    } catch (error) {
-        console.error("Failed to fetch social media data:", error);
-        redirect(`/admin/social?error=${encodeURIComponent('Something went wrong')}`);
-    }
+    
     return (
         <div>
             <SocialMediaForm socialMedia={socialMedia} />

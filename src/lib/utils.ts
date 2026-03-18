@@ -8,6 +8,13 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
+export const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Something went wrong";
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const showErrorTost = (error: any) => {
     if (error instanceof AxiosError) {

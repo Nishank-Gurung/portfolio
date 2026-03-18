@@ -6,11 +6,14 @@ import { IconSchool } from "@tabler/icons-react";
 import { useQueryGetEducations } from "@/hooks/query-hooks/useQueryGetEducations";
 import { education } from "@/lib/types";
 import { Skeleton } from "../ui/skeleton";
+import { Education } from "@/generated/prisma/client";
+
 
 export function EducationSection() {
+
     const { data: educationData, isLoading } = useQueryGetEducations();
 
-    if (isLoading || !educationData?.data?.education) {
+    if (isLoading || !educationData) {
         return (
             <section className="px-6 py-24">
                 <div className="mx-auto max-w-4xl">
@@ -53,7 +56,7 @@ export function EducationSection() {
         );
     }
 
-    const education: education[] = educationData.data.education || [];
+    const education: Education[] = educationData || [];
     return (
         <section id="education" className="px-6 py-24">
             <div className="mx-auto max-w-4xl">

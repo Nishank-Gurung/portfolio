@@ -29,18 +29,18 @@ import {
 import { experienceSchema, experienceSchemaType } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn, showErrorTost, showSuccessToast } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { RichTextEditor } from "../rich-text-editor";
 import { TagInput } from "../tag-input";
 import { Switch } from "../ui/switch";
 import { IconCalendar } from "@tabler/icons-react";
-import { useState, useTransition } from "react";
-import { experience } from "@/lib/types";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import LoadingButton from "../ui/loading-button";
-import APIRequest from "@/lib/BackendReq";
+import { WorkExperience } from "@/generated/prisma/client";
+import { useWorkMutation } from "@/hooks/mutation-hooks/work-mutation";
+import { useRouter } from "next/navigation";
 
 const employmentTypes = [
     "FULL_TIME",
@@ -57,9 +57,10 @@ const typeLabels: Record<string, string> = {
     CONTRACT: "Contract",
     PART_TIME: "Part Time",
 };
-export default function WorkForm({ experience }: { experience?: experience }) {
+export default function WorkForm({ experience }: { experience?: WorkExperience | null }) {
     const [isCurrent, setIsCurrent] = useState(experience?.isCurrent ?? false);
-    const [isPending, startTransition] = useTransition();
+    const { createWorkMutation, updateWorkMutation } = useWorkMutation();
+    const isPending = createWorkMutation.isPending || updateWorkMutation.isPending;
     const router = useRouter();
     const {
         register,
@@ -86,36 +87,13 @@ export default function WorkForm({ experience }: { experience?: experience }) {
     // const isCurrent = watch("isCurrent");
 
     function onSubmit(data: experienceSchemaType) {
-        startTransition(async () => {
-            console.log(data)
-            try {
-                const formData = new FormData();
-                formData.append("company", data.company);
-                formData.append("position", data.position);
-                if (data.url) formData.append("url", data.url);
-                formData.append("type", data.type);
-                formData.append("startDate", data.startDate.toISOString());
-                if (data.endDate)
-                    formData.append("endDate", data.endDate.toISOString());
-                formData.append("isCurrent", data.isCurrent.toString());
-                formData.append("description", data.description);
-                formData.append("skills", JSON.stringify(data.skills));
-                const response = await APIRequest.post(
-                    experience ? `/api/work/${experience.id}` :
-                    "api/work",
-                    formData,
-                );
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push("/admin/experiences");
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+        if (experience) {
+            updateWorkMutation.mutate({ id: experience.id, workData: data });
+            router.push("/admin/experiences");
+        } else {
+            createWorkMutation.mutate(data);
+            router.push("/admin/experiences");
+        }
     }
     return (
         <Card>

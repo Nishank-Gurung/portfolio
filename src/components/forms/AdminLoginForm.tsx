@@ -1,69 +1,38 @@
 "use client";
 import {
     Field,
-    FieldDescription,
     FieldError,
     FieldGroup,
     FieldLabel,
 } from "@/components/ui/field";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { loginSchema, loginSchemaType } from "@/lib/schemas";
 import { Input } from "@/components/ui/input";
 import LoadingButton from "../ui/loading-button";
-import { useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
-import APIRequest from "@/lib/BackendReq";
+import { PasswordInput } from "../ui/input-password";
+import { useAuthMutation } from "@/hooks/mutation-hooks/auth-mutation";
 import { useRouter } from "next/navigation";
 import { ADMIN_DEFAULT_REDIRECT_URL } from "@/config/constant";
-import { PasswordInput } from "../ui/input-password";
-import { Card } from "../ui/card";
 
 export default function AdminLoginForm() {
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
-    const formSchema = z.object({
-        email: z.email(),
-        password: z.string().min(6),
-    });
-
+    const { loginMutation } = useAuthMutation();
     const {
         control,
         handleSubmit,
         formState: { errors },
-    } = useForm({
-        resolver: zodResolver(formSchema),
+    } = useForm<loginSchemaType>({
+        resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
             password: "",
         },
     });
 
-    async function onSubmit(data: z.infer<typeof formSchema>) {
-        console.log(data);
-        startTransition(async () => {
-            console.log(data);
-
-            try {
-                const formData = new FormData();
-                formData.append("email", data.email);
-                formData.append("password", data.password);
-                const response = await APIRequest.post(
-                    "api/auth/login",
-                    formData,
-                );
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push(ADMIN_DEFAULT_REDIRECT_URL);
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+    function onSubmit(data: loginSchemaType) {
+        loginMutation.mutate(data);
     }
+
     return (
         <div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -113,7 +82,7 @@ export default function AdminLoginForm() {
                 </FieldGroup>
                 <div>
                     <LoadingButton
-                        loading={isPending}
+                        loading={loginMutation.isPending}
                         type="submit"
                         className="w-full"
                     >

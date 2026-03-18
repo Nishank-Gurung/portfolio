@@ -28,17 +28,16 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { skill } from "@/lib/types";
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import LoadingButton from "../ui/loading-button";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
-import APIRequest from "@/lib/BackendReq";
+import { Skill } from "@/generated/prisma/client";
+import { useSkillMutation } from "@/hooks/mutation-hooks/skill-mutation";
+import { useRouter } from "next/navigation";
 
 const levels = ["BEGINNER", "INTERMEDIATE", "ADVANCED", "EXPERT"] as const;
 
-export function SkillForm({ skill }: { skill?: skill }) {
-    const [isPending, startTransition] = useTransition();
+export function SkillForm({ skill }: { skill?: Skill | null }) {
+    const { createSkillMutation, updateSkillMutation } = useSkillMutation();
+    const isPending = createSkillMutation.isPending || updateSkillMutation.isPending;
     const router = useRouter();
     const {
         register,
@@ -58,25 +57,14 @@ export function SkillForm({ skill }: { skill?: skill }) {
     });
 
     function onSubmit(data: skillSchemaType) {
-        startTransition(async () => {
-            try {
-                const formData = new FormData();
-                formData.append("name", data.name);
-                if (data.category) formData.append("category", data.category);
-                if (data.level) formData.append("level", data.level);
-                if (data.image) formData.append("image", data.image);
-                const response = await APIRequest.post(skill ? `api/skill/${skill.id}` : "api/skill", formData);
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push("/admin/skills");
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+        if (skill) {
+            updateSkillMutation.mutate({ id: skill.id, skillData: data });
+            router.push("/admin/skills");
+        } else {
+            createSkillMutation.mutate(data);
+            router.push("/admin/skills");
+
+        }
     }
 
     return (

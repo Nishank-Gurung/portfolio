@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useEffect, useState, useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { showErrorTost } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import { useQueryGetSkills } from "@/hooks/query-hooks/useQueryGetSkills";
-import APIRequest from "@/lib/BackendReq";
+import { useQueryGetSocials } from "@/hooks/query-hooks/useQueryGetSocials";
+import PageSkeleton from "../skeleton/PageSkeleton";
+import { SocialMedia } from "@/generated/prisma/client";
+import { useSocialMutation } from "@/hooks/mutation-hooks/social-mutation";
 import {
     Table,
     TableBody,
@@ -25,19 +26,15 @@ import {
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import DeleteModal from "../global/DeleteModal";
 import Image from "next/image";
-import { socialMedia } from "@/lib/types";
-import { useQueryGetSocials } from "@/hooks/query-hooks/useQueryGetSocials";
-import PageSkeleton from "../skeleton/PageSkeleton";
 
 export default function SocialsPage({ error }: { error?: string }) {
     const { data: socialsData, isLoading } = useQueryGetSocials();
-    const [isPending, startTransition] = useTransition();
+    const { deleteSocialMutation } = useSocialMutation();
     const router = useRouter();
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedSocialId, setSelectedSocialId] = useState<number | null>(
         null,
     );
-    const queryClient = useQueryClient();
     useEffect(() => {
         if (error) {
             showErrorTost(error);
@@ -49,40 +46,29 @@ export default function SocialsPage({ error }: { error?: string }) {
         }
     }, [error]);
 
-    if (isLoading || !socialsData?.data?.social) {
+    if (isLoading || !socialsData) {
        return <PageSkeleton/>;
     }
 
-    const socials: socialMedia[] = socialsData.data.social || [];
+    const socials: SocialMedia[] = socialsData || [];
 
-    const handleEdit = (social: socialMedia) => {
+    const handleEdit = (social: SocialMedia) => {
         router.push(`/admin/editor/social?id=${social.id}`);
     };
 
-    const handleDelete = (social: socialMedia) => {
+    const handleDelete = (social: SocialMedia) => {
         setSelectedSocialId(social.id);
         setDeleteModalOpen(true);
     };
 
-    const handleConfirmDelete = async () => {
-        try {
-            startTransition(async () => {
-                const res = await APIRequest.delete(
-                    `/api/social/${selectedSocialId}`,
-                );
-                if (!res.data.success) {
-                    showErrorTost("Failed to delete social media entry");
-                }
-                showSuccessToast(res.data.message);
+    const handleConfirmDelete = () => {
+        if (!selectedSocialId) return;
+        deleteSocialMutation.mutate(selectedSocialId, {
+            onSuccess: () => {
                 setDeleteModalOpen(false);
                 setSelectedSocialId(null);
-                queryClient.invalidateQueries({ queryKey: ["socials"] });
-            });
-        } catch (error) {
-            showErrorTost("Failed to delete social media entry");
-            showErrorTost((error as Error).message);
-            console.log(error);
-        }
+            },
+        });
     };
     return (
         <div className="container mx-auto ">
@@ -179,7 +165,7 @@ export default function SocialsPage({ error }: { error?: string }) {
                 )}
             </div>
             <DeleteModal
-                isPending={isPending}
+                isPending={deleteSocialMutation.isPending}
                 isOpen={deleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
                 onDelete={handleConfirmDelete}

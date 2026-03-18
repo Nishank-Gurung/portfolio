@@ -4,18 +4,20 @@ import { HtmlContent } from "@/components/html-content";
 import { IconMail, IconMapPin, IconPhone } from "@tabler/icons-react";
 import { useQueryGetUser } from "@/hooks/query-hooks/useQueryGetUser";
 import { user } from "@/lib/types";
+import { User } from "@/generated/prisma/client";
+
 
 export function AboutSection() {
     const { data: userData, isLoading } = useQueryGetUser();
 
-    if (isLoading || !userData?.data?.user) {
+    if (isLoading || !userData) {
         return (
             <div className="min-h-dvh flex items-center justify-center">
                 Loading...
             </div>
         );
     }
-    const user: user = userData?.data.user;
+    const user: User = userData;
     return (
         <section id="about" className="px-6 py-24">
             <div className="mx-auto max-w-5xl">

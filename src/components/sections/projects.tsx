@@ -13,11 +13,14 @@ import {
 import { project } from "@/lib/types";
 import { useQueryGetProjects } from "@/hooks/query-hooks/useQueryGetProjects";
 import { Skeleton } from "../ui/skeleton";
+import { Project } from "@/generated/prisma/client";
+
 
 export function ProjectsSection() {
+
     const { data: projects, isLoading } = useQueryGetProjects();
 
-    if (isLoading || !projects?.data?.project) {
+    if (isLoading || !projects) {
         return (
             <section className="px-6 py-24">
                 <div className="mx-auto max-w-4xl">
@@ -78,7 +81,7 @@ export function ProjectsSection() {
         );
     }
 
-    const featured: project[] = projects.data.project || [];
+    const featured: Project[] = projects|| [];
     return (
         <section id="projects" className="px-6 py-24">
             <div className="mx-auto max-w-4xl">
@@ -124,7 +127,7 @@ export function ProjectsSection() {
                                             asChild
                                         >
                                             <a
-                                                href={project.link}
+                                                href={project.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 aria-label={`${project.title} source code`}

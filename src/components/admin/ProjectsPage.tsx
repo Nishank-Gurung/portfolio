@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useEffect, useState, useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { showErrorTost } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import APIRequest from "@/lib/BackendReq";
+import { useQueryGetProjects } from "@/hooks/query-hooks/useQueryGetProjects";
+import PageSkeleton from "../skeleton/PageSkeleton";
+import { Project } from "@/generated/prisma/client";
+import { useProjectMutation } from "@/hooks/mutation-hooks/project-mutation";
 import {
     Table,
     TableBody,
@@ -24,19 +26,15 @@ import {
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import DeleteModal from "../global/DeleteModal";
 import Image from "next/image";
-import { project } from "@/lib/types";
-import { useQueryGetProjects } from "@/hooks/query-hooks/useQueryGetProjects";
-import PageSkeleton from "../skeleton/PageSkeleton";
 
 export default function ProjectsPage({ error }: { error?: string }) {
     const { data: projectsData, isLoading } = useQueryGetProjects();
-    const [isPending, startTransition] = useTransition();
+    const { deleteProjectMutation } = useProjectMutation();
     const router = useRouter();
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
         null,
     );
-    const queryClient = useQueryClient();
     useEffect(() => {
         if (error) {
             showErrorTost(error);
@@ -48,40 +46,29 @@ export default function ProjectsPage({ error }: { error?: string }) {
         }
     }, [error]);
 
-    if (isLoading || !projectsData?.data?.project) {
+    if (isLoading || !projectsData) {
         return <PageSkeleton/>;
     }
 
-    const projects: project[] = projectsData.data.project || [];
+    const projects: Project[] = projectsData || [];
 
-    const handleEdit = (project: project) => {
+    const handleEdit = (project: Project) => {
         router.push(`/admin/editor/project?id=${project.id}`);
     };
 
-    const handleDelete = (project: project) => {
+    const handleDelete = (project: Project) => {
         setSelectedProjectId(project.id);
         setDeleteModalOpen(true);
     };
 
-    const handleConfirmDelete = async () => {
-        try {
-            startTransition(async () => {
-                const res = await APIRequest.delete(
-                    `/api/project/${selectedProjectId}`,
-                );
-                if (!res.data.success) {
-                    showErrorTost("Failed to delete project");
-                }
-                showSuccessToast(res.data.message);
+    const handleConfirmDelete = () => {
+        if (!selectedProjectId) return;
+        deleteProjectMutation.mutate(selectedProjectId, {
+            onSuccess: () => {
                 setDeleteModalOpen(false);
                 setSelectedProjectId(null);
-                queryClient.invalidateQueries({ queryKey: ["projects"] });
-            });
-        } catch (error) {
-            showErrorTost("Failed to delete project");
-            showErrorTost((error as Error).message);
-            console.log(error);
-        }
+            },
+        });
     };
     return (
         <div className="container mx-auto ">
@@ -198,7 +185,7 @@ export default function ProjectsPage({ error }: { error?: string }) {
                 )}
             </div>
             <DeleteModal
-                isPending={isPending}
+                isPending={deleteProjectMutation.isPending}
                 isOpen={deleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
                 onDelete={handleConfirmDelete}

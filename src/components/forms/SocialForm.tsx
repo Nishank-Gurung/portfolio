@@ -21,20 +21,19 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { socialMedia } from "@/lib/types";
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import LoadingButton from "../ui/loading-button";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
-import APIRequest from "@/lib/BackendReq";
+import { SocialMedia } from "@/generated/prisma/client";
+import { useSocialMutation } from "@/hooks/mutation-hooks/social-mutation";
+import { useRouter } from "next/navigation";
 
 export function SocialMediaForm({
     socialMedia,
 }: {
-    socialMedia?: socialMedia;
+    socialMedia?: SocialMedia | null;
 }) {
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+    const { createSocialMutation, updateSocialMutation } = useSocialMutation();
+    const isPending = createSocialMutation.isPending || updateSocialMutation.isPending;
+        const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -53,30 +52,13 @@ export function SocialMediaForm({
     });
 
     function onSubmit(data: socialMediaSchemaType) {
-        startTransition(async () => {
-            try {
-                const formData = new FormData();
-                formData.append("platform", data.platform);
-                formData.append("url", data.url);
-                formData.append("order", data.order.toString());
-                if (data.image) formData.append("image", data.image);
-                const response = await APIRequest.post(
-                    socialMedia
-                        ? `api/social/${socialMedia.id}`
-                        : "api/social",
-                    formData,
-                );
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push("/admin/socials");
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+        if (socialMedia) {
+            updateSocialMutation.mutate({ id: socialMedia.id, socialData: data });
+            router.push("/admin/socials");
+        } else {
+            createSocialMutation.mutate(data);
+            router.push("/admin/socials");
+        }
     }
 
     return (
