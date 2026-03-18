@@ -26,16 +26,14 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { project } from "@/lib/types";
-import { useTransition } from "react";
-import { start } from "repl";
-import APIRequest from "@/lib/BackendReq";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import LoadingButton from "../ui/loading-button";
+import { Project } from "@/generated/prisma/client";
+import { useProjectMutation } from "@/hooks/mutation-hooks/project-mutation";
+import { useRouter } from "next/navigation";
 
-export function ProjectForm({ project }: { project?: project }) {
-    const [isPending, startTransition] = useTransition();
+export function ProjectForm({ project }: { project?: Project | null }) {
+    const { createProjectMutation, updateProjectMutation } = useProjectMutation();
+    const isPending = createProjectMutation.isPending || updateProjectMutation.isPending;
     const router = useRouter();
     const {
         register,
@@ -57,40 +55,13 @@ export function ProjectForm({ project }: { project?: project }) {
     });
 
     function onSubmit(data: projectSchemaType) {
-        console.log("Project form data:", data);
-        // toast.success("Project saved successfully!")
-        startTransition(async () => {
-            try {
-                const formData = new FormData();
-                formData.append("title", data.title);
-                formData.append("description", data.description);
-                formData.append("url", data.url);
-                formData.append("isFeatured", String(data.isFeatured));
-
-                    formData.append(`techStack`, JSON.stringify(data.techStack));
-
-
-                    formData.append(`category`, JSON.stringify(data.category));
-
-                if (data.image) {
-                    formData.append("image", data.image);
-                }
-                console.log(formData)
-                const response = await APIRequest.post(
-                    project ? `api/project/${project.id}` : "api/project",
-                    formData,
-                );
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push("/admin/projects");
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+        if (project) {
+            updateProjectMutation.mutate({ id: project.id, projectData: data });
+            router.push("/admin/projects");
+        } else {
+            createProjectMutation.mutate(data);
+            router.push("/admin/projects");
+        }
     }
 
     return (

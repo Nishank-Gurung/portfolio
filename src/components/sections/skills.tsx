@@ -11,11 +11,14 @@ import { useQueryGetSkills } from "@/hooks/query-hooks/useQueryGetSkills";
 import { skill } from "@/lib/types";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
+import { Skill } from "@/generated/prisma/client";
+
 
 export function SkillsSection() {
+
     const { data: skillsData, isLoading } = useQueryGetSkills();
 
-    if (isLoading || !skillsData?.data?.skill) {
+    if (isLoading || !skillsData) {
         return (
             <section className="px-6 py-24">
                 <div className="mx-auto max-w-4xl">
@@ -38,7 +41,7 @@ export function SkillsSection() {
             </section>
         );
     }
-    const skills: skill[] = skillsData.data.skill || [];
+    const skills: Skill[] = skillsData || [];
 
     return (
         <section id="skills" className="px-6 py-24">

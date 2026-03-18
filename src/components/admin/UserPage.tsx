@@ -1,16 +1,8 @@
 "use client";
 
-import { user } from "@/lib/types";
-import { UserForm } from "../forms/UserForm";
-import APIRequest from "@/lib/BackendReq";
-import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import { showErrorTost } from "@/lib/utils";
-import { TooltipProvider } from "../ui/tooltip";
 import { Button } from "../ui/button";
-import { IconFileText, IconMail } from "@tabler/icons-react";
-import { SocialIcon } from "../sections/SocialIcon";
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import Link from "next/link";
 import { HeroSection } from "../sections/hero";
 export default function UserPage({ error }: { error?: string }) {
@@ -41,28 +33,6 @@ export default function UserPage({ error }: { error?: string }) {
         </div>
     );
 }
-
-const UserContent = async () => {
-    let user: user;
-    try {
-        const res = await APIRequest.get(`/api/user`);
-        if (res.data.success) {
-            user = res.data.user;
-        } else {
-            console.error("Failed to fetch user data:", res.data.message);
-            redirect("/admin/");
-        }
-    } catch (error) {
-        console.error("Failed to fetch user data:", error);
-        return <div>Error loading user data</div>;
-    }
-
-    return (
-        <div>
-            <UserForm />
-        </div>
-    );
-};
 
 // const UserCard = async ({ user }: { user: user }) => {
 //     return (

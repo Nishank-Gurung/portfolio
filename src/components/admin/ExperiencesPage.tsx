@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import WorkForm from "../forms/WorkForm";
 import { Button } from "../ui/button";
-import { useEffect, useState, useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { showErrorTost } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import { useQueryGetSkills } from "@/hooks/query-hooks/useQueryGetSkills";
-import APIRequest from "@/lib/BackendReq";
+import { useQueryGetExperiences } from "@/hooks/query-hooks/useQueryGetExperiences";
+import PageSkeleton from "../skeleton/PageSkeleton";
+import { WorkExperience } from "@/generated/prisma/client";
+import { useWorkMutation } from "@/hooks/mutation-hooks/work-mutation";
 import {
     Table,
     TableBody,
@@ -25,20 +25,15 @@ import {
 } from "../ui/dropdown-menu";
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import DeleteModal from "../global/DeleteModal";
-import Image from "next/image";
-import { useQueryGetExperiences } from "@/hooks/query-hooks/useQueryGetExperiences";
-import { experience } from "@/lib/types";
-import PageSkeleton from "../skeleton/PageSkeleton";
 
 export default function ExperiencesPage({ error }: { error?: string }) {
     const { data: experienceData, isLoading } = useQueryGetExperiences();
-    const [isPending, startTransition] = useTransition();
+    const { deleteWorkMutation } = useWorkMutation();
     const router = useRouter();
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedExperienceId, setSelectedExperienceId] = useState<
         number | null
     >(null);
-    const queryClient = useQueryClient();
     useEffect(() => {
         if (error) {
             showErrorTost(error);
@@ -50,40 +45,29 @@ export default function ExperiencesPage({ error }: { error?: string }) {
         }
     }, [error]);
 
-    if (isLoading || !experienceData?.data?.work) {
+    if (isLoading || !experienceData) {
          return <PageSkeleton/>;
     }
 
-    const experiences: experience[] = experienceData.data.work || [];
+    const experiences: WorkExperience[] = experienceData || [];
 
-    const handleEdit = (exp: experience) => {
+    const handleEdit = (exp: WorkExperience) => {
         router.push(`/admin/editor/experience?id=${exp.id}`);
     };
 
-    const handleDelete = (exp: experience) => {
+    const handleDelete = (exp: WorkExperience) => {
         setSelectedExperienceId(exp.id);
         setDeleteModalOpen(true);
     };
 
-    const handleConfirmDelete = async () => {
-        try {
-            startTransition(async () => {
-                const res = await APIRequest.delete(
-                    `/api/experience/${selectedExperienceId}`,
-                );
-                if (!res.data.success) {
-                    showErrorTost("Failed to delete experience");
-                }
-                showSuccessToast(res.data.message);
+    const handleConfirmDelete = () => {
+        if (!selectedExperienceId) return;
+        deleteWorkMutation.mutate(selectedExperienceId, {
+            onSuccess: () => {
                 setDeleteModalOpen(false);
                 setSelectedExperienceId(null);
-                queryClient.invalidateQueries({ queryKey: ["experiences"] });
-            });
-        } catch (error) {
-            showErrorTost("Failed to delete experience");
-            showErrorTost((error as Error).message);
-            console.log(error);
-        }
+            },
+        });
     };
     return (
         <div className="container mx-auto ">
@@ -179,7 +163,7 @@ export default function ExperiencesPage({ error }: { error?: string }) {
                 )}
             </div>
             <DeleteModal
-                isPending={isPending}
+                isPending={deleteWorkMutation.isPending}
                 isOpen={deleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
                 onDelete={handleConfirmDelete}

@@ -7,44 +7,21 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import LoadingButton from "../ui/loading-button";
-import { useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
-import APIRequest from "@/lib/BackendReq";
-import { useRouter } from "next/navigation";
+import { useAuthMutation } from "@/hooks/mutation-hooks/auth-mutation";
 
 type LogoutModalProps = {
     isOpen?: boolean;
     closeModal?: () => void;
 };
 
-export default function LogoutModal({isOpen, closeModal}: LogoutModalProps) {
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
-    const logout = async () =>{
-        startTransition(async()=>{
-            try {
-                const res = await APIRequest.post("/api/auth/logout")
-                 if (res.data.success) {
-                                     router.push("/admin");
-                                     showSuccessToast(res.data.message)
-                                 } else {
-                                     showErrorTost(res.data.message);
-                                 }   
-            } catch (error) {
-                showErrorTost(error)
-                
-            }
-        })
-    }
+export default function LogoutModal({ isOpen, closeModal }: LogoutModalProps) {
+    const { logoutMutation } = useAuthMutation();
+
     return (
         <Dialog open={isOpen} onOpenChange={closeModal}>
             <form>
-                {/* <DialogTrigger asChild>
-                    <Button variant="outline">Logout</Button>
-                </DialogTrigger> */}
                 <DialogContent className="sm:max-w-sm">
                     <DialogHeader>
                         <DialogTitle>
@@ -60,7 +37,12 @@ export default function LogoutModal({isOpen, closeModal}: LogoutModalProps) {
                         <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
-                        <LoadingButton loading={isPending} onClick={logout}>Logout</LoadingButton>
+                        <LoadingButton
+                            loading={logoutMutation.isPending}
+                            onClick={() => logoutMutation.mutate()}
+                        >
+                            Logout
+                        </LoadingButton>
                     </DialogFooter>
                 </DialogContent>
             </form>

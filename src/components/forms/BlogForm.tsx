@@ -38,20 +38,20 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { cn, showErrorTost, showSuccessToast } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconCalendar } from "@tabler/icons-react";
-import { post } from "@/lib/types";
-import { useTransition } from "react";
 import LoadingButton from "../ui/loading-button";
-import APIRequest from "@/lib/BackendReq";
+import { Post } from "@/generated/prisma/client";
+import { useBlogMutation } from "@/hooks/mutation-hooks/blog-mutation";
 import { useRouter } from "next/navigation";
 
 const statuses = ["DRAFT", "PUBLISHED"] as const;
 
-export function BlogForm({ blogPost }: { blogPost?: post }) {
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+export function BlogForm({ blogPost }: { blogPost?: Post|null }) {
+    const { createBlogMutation, updateBlogMutation } = useBlogMutation();
+    const isPending = createBlogMutation.isPending || updateBlogMutation.isPending;
+        const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -75,43 +75,14 @@ export function BlogForm({ blogPost }: { blogPost?: post }) {
         },
     });
 
-    async function onSubmit(data: postSchemaType) {
-        startTransition(async () => {
-            try {
-                const formData = new FormData();
-                formData.append("title", data.title);
-                formData.append("excerpt", data.excerpt ?? "");
-                formData.append("content", data.content);
-                formData.append("status", data.status);
-                if (data.publishedAt) {
-                    formData.append(
-                        "publishedAt",
-                        data.publishedAt.toISOString(),
-                    );
-                }
-                formData.append("seoTitle", data.seoTitle ?? "");
-                formData.append("seoDescription", data.seoDescription ?? "");
-                formData.append("tag", JSON.stringify(data.tag));
-                formData.append("category", JSON.stringify(data.category));
-                if (data.image) {
-                    formData.append("image", data.image);
-                }
-
-                const response = await APIRequest.post(
-                    blogPost ? `api/posts/${blogPost.id}` : "api/posts",
-                    formData,
-                );
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push("/admin/blog");
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+    function onSubmit(data: postSchemaType) {
+        if (blogPost) {
+            updateBlogMutation.mutate({ id: blogPost.id, blogData: data });
+            router.push("/admin/blog");
+        } else {
+            createBlogMutation.mutate(data);
+            router.push("/admin/blog");
+        }
     }
 
     return (

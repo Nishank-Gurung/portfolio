@@ -30,18 +30,19 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { cn, showErrorTost, showSuccessToast } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { IconCalendar } from "@tabler/icons-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { education } from "@/lib/types";
-import { useRouter } from "next/navigation";
-import APIRequest from "@/lib/BackendReq";
+import { useState } from "react";
 import LoadingButton from "../ui/loading-button";
+import { Education } from "@/generated/prisma/client";
+import { useEducationMutation } from "@/hooks/mutation-hooks/education-mutation";
+import { useRouter } from "next/navigation";
 
-export function EducationForm({ education }: { education?: education }) {
+export function EducationForm({ education }: { education?: Education | null }) {
     const [isCurrent, setIsCurrent] = useState(false);
-    const [isPending, startTransition] = useTransition();
+    const { createEducationMutation, updateEducationMutation } = useEducationMutation();
+    const isPending = createEducationMutation.isPending || updateEducationMutation.isPending;
     const router = useRouter();
     const {
         register,
@@ -67,35 +68,13 @@ export function EducationForm({ education }: { education?: education }) {
     //   const isCurrent = watch("isCurrent")
 
     function onSubmit(data: educationSchemaType) {
-        startTransition(async () => {
-            try {
-                const formData = new FormData();
-                formData.append("institution", data.institution);
-                formData.append("degree", data.degree);
-                formData.append("fieldOfStudy", data.fieldOfStudy);
-                formData.append("description", data.description);
-                formData.append("isCurrent", String(data.isCurrent));
-                formData.append("startDate", data.startDate.toISOString());
-                if (data.endDate) {
-                    formData.append("endDate", data?.endDate.toISOString());
-                }
-                const response = await APIRequest.post(
-                    education
-                        ? `api/education/${education.id}`
-                        : "api/education",
-                    formData,
-                );
-                if (response.data.success) {
-                    showSuccessToast(response.data.message);
-                    router.push("/admin/education");
-                } else {
-                    showErrorTost(response.data.message);
-                }
-            } catch (error) {
-                console.log(error);
-                showErrorTost(error);
-            }
-        });
+        if (education) {
+            updateEducationMutation.mutate({ id: education.id, educationData: data });
+            router.push("/admin/education");
+        } else {
+            createEducationMutation.mutate(data);
+            router.push("/admin/education");
+        }
     }
 
     return (

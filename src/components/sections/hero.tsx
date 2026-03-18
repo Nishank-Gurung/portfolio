@@ -10,13 +10,10 @@ import {
     IconPhone,
 } from "@tabler/icons-react";
 import { useQueryGetUser } from "@/hooks/query-hooks/useQueryGetUser";
-import { useQueryGetSocials } from "@/hooks/query-hooks/useQueryGetSocials";
-import { SocialIcon } from "./SocialIcon";
-import { socialMedia, user } from "@/lib/types";
-import { extractParagraphsOnly } from "@/lib/utils";
 import { SocialsSection } from "./socials";
 import { HtmlContent } from "../html-content";
 import { Skeleton } from "../ui/skeleton";
+import { User } from "@/generated/prisma/client";
 
 function stripHtml(html: string): string {
     return html.replace(/<[^>]*>/g, "").trim();
@@ -25,7 +22,7 @@ function stripHtml(html: string): string {
 export function HeroSection() {
     const { data: userData, isLoading } = useQueryGetUser();
 
-    if (isLoading || !userData?.data?.user) {
+    if (isLoading || !userData) {
         return (
             <section className="relative flex min-h-dvh items-center justify-center px-6 py-20">
                 <div className="mx-auto flex max-w-4xl flex-col items-center text-center w-full">
@@ -87,7 +84,7 @@ export function HeroSection() {
             </section>
         );
     }
-    const user: user = userData?.data.user;
+    const user: User = userData;
 
     return (
         <section
@@ -97,7 +94,7 @@ export function HeroSection() {
             <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
                 {/* Avatar Section */}
                 <Avatar className="mb-8 size-28 ring-2 ring-border ring-offset-4 ring-offset-background">
-                    <AvatarImage src={user?.image} alt={user.name} />
+                    <AvatarImage src={user?.image ?? undefined} alt={user.name} />
                     <AvatarFallback className="text-2xl font-semibold bg-secondary text-secondary-foreground">
                         {user.name
                             .split(" ")

@@ -2,10 +2,14 @@
 
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { useEffect, useState, useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { showErrorTost } from "@/lib/utils";
 import { useQueryGetEducations } from "@/hooks/query-hooks/useQueryGetEducations";
-import { education } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import DeleteModal from "../global/DeleteModal";
+import PageSkeleton from "../skeleton/PageSkeleton";
+import { Education } from "@/generated/prisma/client";
+import { useEducationMutation } from "@/hooks/mutation-hooks/education-mutation";
 import {
     Table,
     TableBody,
@@ -15,31 +19,21 @@ import {
     TableRow,
 } from "../ui/table";
 import {
-    IconDots,
-    IconPencil,
-    IconTrash,
-} from "@tabler/icons-react";
-import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useRouter } from "next/navigation";
-import DeleteModal from "../global/DeleteModal";
-import APIRequest from "@/lib/BackendReq";
-import { useQueryClient } from "@tanstack/react-query";
-import PageSkeleton from "../skeleton/PageSkeleton";
+import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 
 export default function EducationsPage({ error }: { error?: string }) {
     const { data: educationData, isLoading } = useQueryGetEducations();
-    const [isPending, startTransition] = useTransition();
+    const { deleteEducationMutation } = useEducationMutation();
     const router = useRouter();
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedEducationId, setSelectedEducationId] = useState<
         number | null
     >(null);
-     const queryClient = useQueryClient()
     useEffect(() => {
         if (error) {
             showErrorTost(error);
@@ -51,41 +45,31 @@ export default function EducationsPage({ error }: { error?: string }) {
         }
     }, [error]);
 
-    if (isLoading || !educationData?.data?.education) {
+    if (isLoading || !educationData) {
          return <PageSkeleton/>;
     }
 
-    const education: education[] = educationData.data.education || [];
+    const education: Education[] = educationData || [];
  
 
-    const handleEdit = (edu: education) => {
+    const handleEdit = (edu: Education) => {
         router.push(`/admin/editor/education?id=${edu.id}`);
     };
 
-    const handleDelete = (edu: education) => {
+    const handleDelete = (edu: Education) => {
         setSelectedEducationId(edu.id);
         setDeleteModalOpen(true);
     };
 
-    const handleConfirmDelete = async () => {
-        try {
-            startTransition(async () => {
-                const res = await APIRequest.delete(`/api/education/${selectedEducationId}`);
-                if (!res.data.success) {
-                    showErrorTost("Failed to delete education");
-                }
-                showSuccessToast(res.data.message)
+    const handleConfirmDelete = () => {
+        if (!selectedEducationId) return;
+        deleteEducationMutation.mutate(selectedEducationId, {
+            onSuccess: () => {
                 setDeleteModalOpen(false);
                 setSelectedEducationId(null);
-                        queryClient.invalidateQueries({queryKey: ['educations']})
-
-            });
-        } catch (error) {
-            showErrorTost("Failed to delete education");
-            showErrorTost((error as Error).message);
-            console.log(error)
-        }
-    }
+            },
+        });
+    };
     return (
         <div className="container mx-auto ">
             <div className="flex items-center justify-between mb-6">
@@ -175,7 +159,7 @@ export default function EducationsPage({ error }: { error?: string }) {
                     </div>
                 )}
             </div>
-            <DeleteModal isPending={isPending} isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onDelete={handleConfirmDelete}/>
+            <DeleteModal isPending={deleteEducationMutation.isPending} isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onDelete={handleConfirmDelete}/>
         </div>
     );
 }

@@ -1,8 +1,7 @@
 import { BlogForm } from '@/components/forms/BlogForm'
-import APIRequest from '@/lib/BackendReq'
-import { post } from '@/lib/types'
-import axios from 'axios'
-import { redirect } from 'next/navigation'
+import { getBlogById } from '@/data-access/blog-data-access'
+import { Post } from '@/generated/prisma/client'
+import { notFound } from 'next/navigation'
 
 interface PageProps {
   searchParams: Promise<{
@@ -18,23 +17,15 @@ export default function page({searchParams}: PageProps) {
 const BlogPage = async ({searchParams}: PageProps) => {
   const {id} = await searchParams
 
-  if (!id) {
-    return <div><BlogForm /></div>
-  }
+  
 
-  let blog: post
-    try {
-        const res = await APIRequest.get(`/api/blog/${id}`)
-        if(res.data.success){
-        blog = res.data.blog
-        } else {
-            console.error("Failed to fetch blog data:", res.data)
-            redirect(`/admin/blog?error=${encodeURIComponent('Something went wrong')}`)
-        }
-    } catch (error) {
-        console.error("Failed to fetch blog data:", error)
-        redirect(`/admin/blog?error=${encodeURIComponent('Something went wrong')}`)
+  let blog: Post | null = null
+  if (id) {
+    blog = await getBlogById(Number(id))
+    if (!blog) {
+      notFound();
     }
+  }
   return (
     <div>
         <BlogForm blogPost={blog} />

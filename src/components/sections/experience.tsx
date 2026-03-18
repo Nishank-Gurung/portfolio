@@ -7,6 +7,7 @@ import { IconExternalLink } from "@tabler/icons-react";
 import { useQueryGetExperiences } from "@/hooks/query-hooks/useQueryGetExperiences";
 import { experience } from "@/lib/types";
 import { Skeleton } from "../ui/skeleton";
+import { WorkExperience } from "@/generated/prisma/client";
 
 const typeLabels: Record<string, string> = {
     FULL_TIME: "Full-time",
@@ -17,9 +18,10 @@ const typeLabels: Record<string, string> = {
 };
 
 export function ExperienceSection() {
+
     const { data: experienceData, isLoading } = useQueryGetExperiences();
 
-    if (isLoading || !experienceData?.data?.work) {
+    if (isLoading || !experienceData) {
         return (
             <section className="px-6 py-24">
                 <div className="mx-auto max-w-4xl">
@@ -85,7 +87,7 @@ export function ExperienceSection() {
         );
     }
 
-    const experiences: experience[] = experienceData.data.work || [];
+    const experiences: WorkExperience[] = experienceData || [];
     return (
         <section id="experience" className="px-6 py-24">
             <div className="mx-auto max-w-4xl">

@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { skill } from "@/lib/types";
-import { useEffect, useState, useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { showErrorTost } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 import { useQueryGetSkills } from "@/hooks/query-hooks/useQueryGetSkills";
-import APIRequest from "@/lib/BackendReq";
+import PageSkeleton from "../skeleton/PageSkeleton";
+import { Skill } from "@/generated/prisma/client";
+import { useSkillMutation } from "@/hooks/mutation-hooks/skill-mutation";
 import {
     Table,
     TableBody,
@@ -26,15 +26,13 @@ import {
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import DeleteModal from "../global/DeleteModal";
 import Image from "next/image";
-import PageSkeleton from "../skeleton/PageSkeleton";
 
 export default function SkillsPage({ error }: { error?: string }) {
     const { data: skillsData, isLoading } = useQueryGetSkills();
-    const [isPending, startTransition] = useTransition();
+    const { deleteSkillMutation } = useSkillMutation();
     const router = useRouter();
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedSkillId, setSelectedSkillId] = useState<number | null>(null);
-    const queryClient = useQueryClient();
     useEffect(() => {
         if (error) {
             showErrorTost(error);
@@ -46,40 +44,29 @@ export default function SkillsPage({ error }: { error?: string }) {
         }
     }, [error]);
 
-    if (isLoading || !skillsData?.data?.skill) {
+    if (isLoading || !skillsData) {
          return <PageSkeleton/>;
     }
 
-    const skills: skill[] = skillsData.data.skill || [];
+    const skills: Skill[] = skillsData || [];
 
-    const handleEdit = (skill: skill) => {
+    const handleEdit = (skill: Skill) => {
         router.push(`/admin/editor/skill?id=${skill.id}`);
     };
 
-    const handleDelete = (skill: skill) => {
+    const handleDelete = (skill: Skill) => {
         setSelectedSkillId(skill.id);
         setDeleteModalOpen(true);
     };
 
-    const handleConfirmDelete = async () => {
-        try {
-            startTransition(async () => {
-                const res = await APIRequest.delete(
-                    `/api/skill/${selectedSkillId}`,
-                );
-                if (!res.data.success) {
-                    showErrorTost("Failed to delete skill");
-                }
-                showSuccessToast(res.data.message);
+    const handleConfirmDelete = () => {
+        if (!selectedSkillId) return;
+        deleteSkillMutation.mutate(selectedSkillId, {
+            onSuccess: () => {
                 setDeleteModalOpen(false);
                 setSelectedSkillId(null);
-                queryClient.invalidateQueries({ queryKey: ["skills"] });
-            });
-        } catch (error) {
-            showErrorTost("Failed to delete skill");
-            showErrorTost((error as Error).message);
-            console.log(error);
-        }
+            },
+        });
     };
     return (
         <div className="container mx-auto ">
@@ -175,7 +162,7 @@ export default function SkillsPage({ error }: { error?: string }) {
                 )}
             </div>
             <DeleteModal
-                isPending={isPending}
+                isPending={deleteSkillMutation.isPending}
                 isOpen={deleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
                 onDelete={handleConfirmDelete}

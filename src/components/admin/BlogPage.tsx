@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { BlogForm } from "../forms/BlogForm";
-import { useEffect, useState, useTransition } from "react";
-import { showErrorTost, showSuccessToast } from "@/lib/utils";
+import { useQueryGetBlogs } from "@/hooks/query-hooks/useQueryGetBlogs";
+import { useEffect, useState } from "react";
+import { showErrorTost } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import APIRequest from "@/lib/BackendReq";
+import { useBlogMutation } from "@/hooks/mutation-hooks/blog-mutation";
 import {
     Table,
     TableBody,
@@ -25,17 +24,15 @@ import {
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import DeleteModal from "../global/DeleteModal";
 import Image from "next/image";
-import { useQueryGetBlogs } from "@/hooks/query-hooks/useQueryGetBlogs";
-import { post } from "@/lib/types";
+import { Post } from "@/generated/prisma/client";
 import PageSkeleton from "../skeleton/PageSkeleton";
 
 export default function BlogPage({ error }: { error?: string }) {
     const { data: blogData, isLoading } = useQueryGetBlogs();
-    const [isPending, startTransition] = useTransition();
+    const { deleteBlogMutation } = useBlogMutation();
     const router = useRouter();
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedBlogId, setSelectedBlogId] = useState<number | null>(null);
-    const queryClient = useQueryClient();
     useEffect(() => {
         if (error) {
             showErrorTost(error);
@@ -47,40 +44,29 @@ export default function BlogPage({ error }: { error?: string }) {
         }
     }, [error]);
 
-    if (isLoading || !blogData?.data?.blog) {
+    if (isLoading || !blogData) {
          return <PageSkeleton/>;
     }
 
-    const blogs: post[] = blogData.data.blog || [];
+    const blogs = blogData || [];
 
-    const handleEdit = (project: post) => {
+    const handleEdit = (project: Post) => {
         router.push(`/admin/editor/blog?id=${project.id}`);
     };
 
-    const handleDelete = (project: post) => {
+    const handleDelete = (project: Post) => {
         setSelectedBlogId(project.id);
         setDeleteModalOpen(true);
     };
 
-    const handleConfirmDelete = async () => {
-        try {
-            startTransition(async () => {
-                const res = await APIRequest.delete(
-                    `/api/blog/${selectedBlogId}`,
-                );
-                if (!res.data.success) {
-                    showErrorTost("Failed to delete blog post");
-                }
-                showSuccessToast(res.data.message);
+    const handleConfirmDelete = () => {
+        if (!selectedBlogId) return;
+        deleteBlogMutation.mutate(selectedBlogId, {
+            onSuccess: () => {
                 setDeleteModalOpen(false);
                 setSelectedBlogId(null);
-                queryClient.invalidateQueries({ queryKey: ["blogs"] });
-            });
-        } catch (error) {
-            showErrorTost("Failed to delete blog post");
-            showErrorTost((error as Error).message);
-            console.log(error);
-        }
+            },
+        });
     };
 
     return (
@@ -111,7 +97,7 @@ export default function BlogPage({ error }: { error?: string }) {
                                     <TableHead>Image</TableHead>
                                     <TableHead>Category</TableHead>
                                     <TableHead>Seo Title</TableHead>
-                                    <TableHead>Views</TableHead>
+                                    {/* <TableHead>Views</TableHead> */}
                                     <TableHead className="w-[100px]">
                                         Actions
                                     </TableHead>
@@ -140,7 +126,7 @@ export default function BlogPage({ error }: { error?: string }) {
                                         <TableCell>
                                             {blog.seoTitle || "No seo title"}
                                         </TableCell>
-                                        <TableCell>{blog.postViews}</TableCell>
+                                        {/* <TableCell>{blog.postViews}</TableCell> */}
                                         <TableCell className="w-[100px]">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -183,7 +169,7 @@ export default function BlogPage({ error }: { error?: string }) {
                 )}
             </div>
             <DeleteModal
-                isPending={isPending}
+                isPending={deleteBlogMutation.isPending}
                 isOpen={deleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
                 onDelete={handleConfirmDelete}

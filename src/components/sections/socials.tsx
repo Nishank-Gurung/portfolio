@@ -4,6 +4,7 @@ import { SocialIcon } from "./SocialIcon";
 import { Skeleton } from "../ui/skeleton";
 
 export function SocialsSection() {
+
     const { data: socialData, isLoading } = useQueryGetSocials();
     if (isLoading) {
         return (
@@ -14,7 +15,7 @@ export function SocialsSection() {
             </div>
         );
     }
-    const socialLinks = socialData?.data.social || [];
+    const socialLinks = socialData || [];
     return (
         <>
             {socialLinks.map((social: socialMedia) => (
