@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { imagekit } from "@/lib/imagekit";
 import { userSchema, userSchemaType } from "@/lib/schemas";
 import { getErrorMessage } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
 
 export const updateUser = async (userInfo: userSchemaType) => {
     let uploadFileId: string | null = null;
@@ -60,7 +61,7 @@ export const updateUser = async (userInfo: userSchemaType) => {
             });
             return newUser;
         });
-
+        revalidatePath("/admin/editor/user");
         return {
             success: true,
             message: "User updated successfully",

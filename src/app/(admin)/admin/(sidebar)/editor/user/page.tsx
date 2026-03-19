@@ -2,6 +2,7 @@ import { UserForm } from "@/components/forms/UserForm";
 import { getUser } from "@/data-access/user-data-access";
 import { User } from "@/generated/prisma/client";
 import { notFound } from "next/navigation";
+export const dynamic = "force-dynamic";
 
 export default function page() {
     return (
