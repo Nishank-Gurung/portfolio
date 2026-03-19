@@ -18,7 +18,7 @@ export const useUserMutation = () => {
         onSuccess: (data) => {
             toast.success(data.message);
             router.refresh();
-            queryClient.invalidateQueries({ queryKey: ["user"] });
+            queryClient.invalidateQueries({ queryKey: ["users"] });
         },
         onError: (error: Error) => {
             toast.error(error.message);
