@@ -4,23 +4,23 @@ import { User } from "@/generated/prisma/client";
 import { notFound } from "next/navigation";
 
 export default function page() {
-  return (
-    <div>
-      <UserContent />
-    </div>
-  );
+    return (
+        <div>
+            <UserContent />
+        </div>
+    );
 }
 
 const UserContent = async () => {
-  let user: User | null = null;
+    let user: User | null = null;
 
-  user = await getUser();
-  if (!user) {
-    notFound();
-  }
-  return (
-    <div>
-      <UserForm user={user} />
-    </div>
-  );
+    user = await getUser();
+    if (!user) {
+        notFound();
+    }
+    return (
+        <div>
+            <UserForm user={user} />
+        </div>
+    );
 };
