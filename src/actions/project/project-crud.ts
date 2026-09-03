@@ -23,6 +23,7 @@ export const createProject = async (projectData: projectSchemaType) => {
         const uploadResult = await imagekit.upload({
             file: buffer,
             fileName: data.image.name,
+            folder: "/portfolio/project"
         });
 
         uploadedFileId = uploadResult.fileId;
