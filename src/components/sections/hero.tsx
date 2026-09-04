@@ -263,7 +263,7 @@ export function HeroSection() {
                             {user.about ? (
                                 <HtmlContent
                                     html={user.about}
-                                    className="font-mono text-[16px] sm:text-[17px] leading-relaxed text-foreground/90"
+                                    className="text-[15px] sm:text-[16px] leading-relaxed text-foreground/90"
                                 />
                             ) : null}
                         </div>

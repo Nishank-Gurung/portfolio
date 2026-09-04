@@ -87,7 +87,7 @@ export function ProjectsSection() {
 
                 {/* Category Filter Tabs */}
                 {categories.length > 2 && (
-                    <div className="flex flex-wrap items-center gap-1.5 mb-8 sm:mb-10">
+                    <div className="flex flex-wrap items-center gap-2 mb-8 sm:mb-10">
                         {categories.map((category) => {
                             const isActive = selectedCategory === category;
                             return (
@@ -97,18 +97,18 @@ export function ProjectsSection() {
                                     onClick={() => setSelectedCategory(category)}
                                     className={`relative px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
                                         isActive
-                                            ? "text-primary-foreground font-semibold"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                            ? "text-white font-semibold border border-accent/40"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-border/50 bg-card/40"
                                     }`}
                                 >
                                     {isActive && (
                                         <motion.div
                                             layoutId="activeProjectCategory"
-                                            className="absolute inset-0 bg-primary rounded-full shadow-xs -z-10"
+                                            className="absolute inset-0 bg-accent rounded-full shadow-md shadow-accent/25"
                                             transition={{ type: "spring", stiffness: 380, damping: 30 }}
                                         />
                                     )}
-                                    {category}
+                                    <span className="relative z-10">{category}</span>
                                 </button>
                             );
                         })}

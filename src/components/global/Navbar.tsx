@@ -82,7 +82,7 @@ export default function Navbar() {
                             onClick={(e) => scrollToSection(e, item.href)}
                             className={`relative px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
                                 isActive
-                                    ? "text-primary-foreground font-semibold"
+                                    ? "text-white font-semibold"
                                     : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                             }`}
                             aria-label={item.label}
@@ -90,7 +90,7 @@ export default function Navbar() {
                             {isActive && (
                                 <motion.div
                                     layoutId="activeNavDock"
-                                    className="absolute inset-0 bg-primary rounded-full shadow-xs -z-10"
+                                    className="absolute inset-0 bg-accent rounded-full shadow-xs"
                                     transition={{
                                         type: "spring",
                                         stiffness: 380,
@@ -98,8 +98,8 @@ export default function Navbar() {
                                     }}
                                 />
                             )}
-                            <Icon className="size-3.5 sm:hidden" />
-                            <span className="hidden sm:inline">{item.label}</span>
+                            <Icon className="size-3.5 sm:hidden relative z-10" />
+                            <span className="hidden sm:inline relative z-10">{item.label}</span>
                         </a>
                     );
                 })}

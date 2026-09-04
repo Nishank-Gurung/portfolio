@@ -28,8 +28,7 @@ export function AboutSection() {
                         {user.about ? (
                             <HtmlContent
                                 html={user.about}
-                                // className="text-lg prose-p:my-1 prose-ul:my-2 prose-li:my-0 text-pretty"
-                                className="font-mono text-[15px] leading-relaxed"
+                                className="text-[15px] sm:text-[16px] leading-relaxed text-foreground/90"
                             />
                         ) : null}
                     </div>
