@@ -12,6 +12,7 @@ import {
     IconSchool,
 } from "@tabler/icons-react";
 import { Button } from "../ui/button";
+import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_ITEMS = [
     { label: "Home", href: "#hero", icon: IconHome },
@@ -104,7 +105,10 @@ export default function Navbar() {
                     );
                 })}
 
-                <div className="hidden sm:block h-4 w-px bg-border/60 mx-1" />
+                <div className="h-4 w-px bg-border/60 mx-0.5 sm:mx-1" />
+
+                {/* Theme Switcher */}
+                <ThemeToggle />
 
                 {/* Quick Contact Action */}
                 <Button

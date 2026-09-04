@@ -24,9 +24,11 @@ model User {
     about     String?
     phone     String?
     address   String?
-    role      String   @default("ADMIN")
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    resumeUrl    String?
+    resumeFileId String?
+    role         String   @default("ADMIN")
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 
     posts Post[]
 }
@@ -146,3 +148,15 @@ model PostView {
     post      Post     @relation(fields: [postId], references: [id])
     createdAt DateTime @default(now())
 }
+
+model Message {
+    id        Int      @id @default(autoincrement())
+    name      String
+    email     String
+    subject   String?
+    message   String
+    isRead    Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+

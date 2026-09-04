@@ -12,6 +12,7 @@ import {
     IconCheck,
     IconCode,
     IconCopy,
+    IconDownload,
     IconFileText,
     IconMail,
     IconMapPin,
@@ -334,6 +335,27 @@ export function HeroSection() {
                                         </a>
                                     </div>
                                 )}
+
+                                {user.resumeUrl && (
+                                    <div className="flex items-center justify-between gap-2 text-sm pt-2 border-t border-border/40">
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-1 rounded-md bg-accent/10 text-accent shrink-0">
+                                                <IconFileText className="size-3.5" />
+                                            </div>
+                                            <span className="text-xs text-muted-foreground">Resume / CV</span>
+                                        </div>
+                                        <a
+                                            href={user.resumeUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            download
+                                            className="text-xs font-semibold text-accent hover:underline inline-flex items-center gap-1"
+                                        >
+                                            PDF
+                                            <IconDownload className="size-3" />
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -342,7 +364,7 @@ export function HeroSection() {
                 {/* CTA Action Buttons */}
                 <motion.div
                     variants={itemVariants}
-                    className="mb-10 flex flex-wrap items-center justify-center gap-4"
+                    className="mb-10 flex flex-wrap items-center justify-center gap-3.5"
                 >
                     <Button
                         size="lg"
@@ -355,6 +377,25 @@ export function HeroSection() {
                             <IconArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                         </a>
                     </Button>
+
+                    {user.resumeUrl ? (
+                        <Button
+                            size="lg"
+                            className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-md shadow-accent/20 transition-all text-sm font-semibold gap-2"
+                            asChild
+                        >
+                            <a
+                                href={user.resumeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download="Nishank_Gurung_Resume.pdf"
+                                title="Download CV (PDF)"
+                            >
+                                <IconDownload className="size-4" />
+                                Download CV
+                            </a>
+                        </Button>
+                    ) : null}
 
                     <Button
                         size="lg"

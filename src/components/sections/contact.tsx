@@ -15,6 +15,7 @@ import {
     IconSparkles,
 } from "@tabler/icons-react";
 import { SocialsSection } from "./socials";
+import { QuickMessageForm } from "./QuickMessageForm";
 import { useQueryGetUser } from "@/hooks/query-hooks/useQueryGetUser";
 import { toast } from "sonner";
 
@@ -58,8 +59,8 @@ export function ContactSection() {
                     className="rounded-3xl border border-border/70 bg-card/60 backdrop-blur-xl p-6 sm:p-10 shadow-sm"
                 >
                     <div className="grid gap-10 md:grid-cols-12 items-start">
-                        {/* Left Column: Direct Outreach & Quick Info (7 cols) */}
-                        <div className="md:col-span-7 space-y-6">
+                        {/* Left Column: Direct Outreach & Connect Channels (5 cols) */}
+                        <div className="md:col-span-5 space-y-6">
                             <div className="space-y-3">
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-xs font-medium">
                                     <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -70,96 +71,107 @@ export function ContactSection() {
                                     Have a challenge or idea in mind?
                                 </h3>
 
-                                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                                    I specialize in full-stack architecture, performant web applications, and intuitive user experiences. Drop a line and let&apos;s start a conversation.
+                                <p className="text-muted-foreground text-sm leading-relaxed">
+                                    I specialize in full-stack architecture, performant web & mobile applications, and intuitive user experiences. Drop a line and let&apos;s build something exceptional.
                                 </p>
                             </div>
 
-                            {/* Direct Action Buttons */}
-                            <div className="flex flex-wrap items-center gap-3 pt-2">
-                                <Button
-                                    size="lg"
-                                    className="group relative shadow-md shadow-accent/15 hover:shadow-accent/25 transition-all text-sm font-semibold"
-                                    asChild
-                                >
-                                    <a href={`mailto:${email}`}>
-                                        <IconMail className="mr-2 size-4 group-hover:scale-110 transition-transform" />
-                                        Send Message
-                                        <IconArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
-                                    </a>
-                                </Button>
-
-                                <Button
-                                    size="lg"
-                                    variant="outline"
-                                    onClick={handleCopyEmail}
-                                    className="border-border/80 hover:bg-muted transition-all text-sm font-semibold gap-2 shadow-xs"
-                                >
-                                    {copiedEmail ? (
-                                        <>
-                                            <IconCheck className="size-4 text-emerald-500" />
-                                            Email Copied!
-                                        </>
-                                    ) : (
-                                        <>
-                                            <IconCopy className="size-4 text-muted-foreground" />
-                                            Copy Email
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-
-                            {/* Quick Info Items */}
-                            <div className="pt-4 border-t border-border/40 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                {user?.address && (
-                                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-                                        <div className="p-1.5 rounded-lg bg-accent/10 text-accent shrink-0">
-                                            <IconMapPin className="size-3.5" />
-                                        </div>
-                                        <span>{user.address}</span>
-                                    </div>
-                                )}
-
-                                {user?.phone && (
-                                    <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-                                        <div className="p-1.5 rounded-lg bg-accent/10 text-accent shrink-0">
-                                            <IconPhone className="size-3.5" />
-                                        </div>
-                                        <a
-                                            href={`tel:+977${user.phone.replace(/\s+/g, "")}`}
-                                            className="hover:text-accent transition-colors"
-                                        >
-                                            +977 {user.phone}
+                            {/* Direct Actions & Info */}
+                            <div className="space-y-3">
+                                <div className="flex flex-wrap items-center gap-2.5">
+                                    <Button
+                                        size="sm"
+                                        className="group relative shadow-md shadow-accent/15 hover:shadow-accent/25 transition-all text-xs font-semibold"
+                                        asChild
+                                    >
+                                        <a href={`mailto:${email}`}>
+                                            <IconMail className="mr-1.5 size-3.5 group-hover:scale-110 transition-transform" />
+                                            Direct Email
+                                            <IconArrowRight className="ml-1.5 size-3.5 transition-transform group-hover:translate-x-1" />
                                         </a>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                                    </Button>
 
-                        {/* Right Column: Social Channels (5 cols) */}
-                        <div className="md:col-span-5 flex flex-col justify-between space-y-6 md:border-l md:border-border/50 md:pl-8 pt-6 md:pt-0 border-t border-border/40 md:border-t-0">
-                            <div>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <IconSparkles className="size-4 text-accent" />
-                                    <h4 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-                                        Connect Across the Web
-                                    </h4>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={handleCopyEmail}
+                                        className="border-border/80 hover:bg-muted transition-all text-xs font-semibold gap-1.5 shadow-xs"
+                                    >
+                                        {copiedEmail ? (
+                                            <>
+                                                <IconCheck className="size-3.5 text-emerald-500" />
+                                                Copied!
+                                            </>
+                                        ) : (
+                                            <>
+                                                <IconCopy className="size-3.5 text-muted-foreground" />
+                                                Copy Email
+                                            </>
+                                        )}
+                                    </Button>
                                 </div>
-                                <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                                    Find my code repositories, articles, career milestones, and daily dev thoughts on these platforms.
-                                </p>
 
+                                <div className="pt-3 border-t border-border/40 space-y-2 text-xs text-muted-foreground">
+                                    {user?.address && (
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-1 rounded-md bg-accent/10 text-accent shrink-0">
+                                                <IconMapPin className="size-3.5" />
+                                            </div>
+                                            <span>{user.address}</span>
+                                        </div>
+                                    )}
+
+                                    {user?.phone && (
+                                        <div className="flex items-center gap-2">
+                                            <div className="p-1 rounded-md bg-accent/10 text-accent shrink-0">
+                                                <IconPhone className="size-3.5" />
+                                            </div>
+                                            <a
+                                                href={`tel:+977${user.phone.replace(/\s+/g, "")}`}
+                                                className="hover:text-accent transition-colors"
+                                            >
+                                                +977 {user.phone}
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Social Profiles */}
+                            <div className="pt-2">
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">
+                                    Find Me Online
+                                </h4>
                                 <TooltipProvider delayDuration={0}>
-                                    <div className="flex flex-wrap gap-2.5 p-3 rounded-2xl border border-border/60 bg-muted/20">
+                                    <div className="flex flex-wrap gap-2">
                                         <SocialsSection />
                                     </div>
                                 </TooltipProvider>
                             </div>
 
                             {/* Timezone / Availability Stamp */}
-                            <div className="p-4 rounded-xl bg-muted/30 border border-border/50 text-xs font-mono text-muted-foreground flex items-center justify-between">
+                            <div className="p-3.5 rounded-xl bg-muted/20 border border-border/50 text-xs font-mono text-muted-foreground flex items-center justify-between">
                                 <span>Based in Nepal</span>
                                 <span className="text-accent font-medium">UTC+05:45 (NPT)</span>
+                            </div>
+                        </div>
+
+                        {/* Right Column: Quick Message Form (7 cols) */}
+                        <div className="md:col-span-7 md:border-l md:border-border/50 md:pl-8 pt-8 md:pt-0 border-t border-border/40 md:border-t-0 space-y-4">
+                            <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <IconSparkles className="size-4 text-accent" />
+                                    <h4 className="text-lg font-bold tracking-tight text-foreground">
+                                        Send a Quick Message
+                                    </h4>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    Fill out the form below and your message will be delivered straight to my dashboard.
+                                </p>
+                            </div>
+
+                            <div className="rounded-2xl border border-border/60 bg-background/40 p-4 sm:p-6 shadow-xs">
+                                <QuickMessageForm />
                             </div>
                         </div>
                     </div>

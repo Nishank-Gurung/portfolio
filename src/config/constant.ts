@@ -8,6 +8,7 @@ import {
     IconBook,
     IconArticle,
     IconGitCommit,
+    IconInbox,
 } from "@tabler/icons-react";
 
 export const TOKEN_NAME = "auth_token";
@@ -60,6 +61,11 @@ export const AdminSideBarLinks: SidebarNavLinks[] = [
         title: "Blog",
         icon: IconArticle,
         url: "/admin/blog",
+    },
+    {
+        title: "Messages",
+        icon: IconInbox,
+        url: "/admin/messages",
     },
     {
         title: "GitPage",

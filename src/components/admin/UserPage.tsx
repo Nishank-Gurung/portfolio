@@ -13,6 +13,7 @@ import {
     IconCode,
     IconEdit,
     IconExternalLink,
+    IconFileText,
     IconFolder,
     IconMail,
     IconMapPin,
@@ -178,8 +179,8 @@ export default function UserPage({ error }: { error?: string }) {
                         </Button>
                     </div>
 
-                    {/* Contact Pills Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-muted/30 border border-border/50 text-xs">
+                    {/* Contact & Asset Pills Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3.5 rounded-xl bg-muted/30 border border-border/50 text-xs">
                         <div className="flex items-center gap-2">
                             <IconMail className="size-4 text-accent shrink-0" />
                             <div className="truncate">
@@ -201,6 +202,26 @@ export default function UserPage({ error }: { error?: string }) {
                             <div className="truncate">
                                 <span className="block text-muted-foreground text-[10px] uppercase font-mono">Location</span>
                                 <span className="font-medium text-foreground">{user.address || "Not set"}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <IconFileText className="size-4 text-accent shrink-0" />
+                            <div className="truncate">
+                                <span className="block text-muted-foreground text-[10px] uppercase font-mono">Resume / CV</span>
+                                {user.resumeUrl ? (
+                                    <a
+                                        href={user.resumeUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="font-medium text-accent hover:underline inline-flex items-center gap-1"
+                                    >
+                                        Uploaded (PDF)
+                                        <IconExternalLink className="size-3" />
+                                    </a>
+                                ) : (
+                                    <span className="text-muted-foreground">Not uploaded</span>
+                                )}
                             </div>
                         </div>
                     </div>

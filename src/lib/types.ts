@@ -7,8 +7,21 @@ export type user = {
     fileId?: string;
     about?: string;
     phone?: string;
-    address?: string;
+    resumeUrl?: string;
+    resumeFileId?: string;
+    role?: string;
     password: string;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type message = {
+    id: number;
+    name: string;
+    email: string;
+    subject?: string | null;
+    message: string;
+    isRead: boolean;
     createdAt: Date;
     updatedAt: Date;
 };
