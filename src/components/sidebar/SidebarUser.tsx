@@ -1,43 +1,62 @@
 "use client";
 
-import { IconCaretUpDownFilled, IconLogout } from "@tabler/icons-react";
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import React, { useState } from "react";
+import { IconLogout } from "@tabler/icons-react";
 import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    useSidebar,
 } from "@/components/ui/sidebar";
-import React from "react";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useQueryGetUser } from "@/hooks/query-hooks/useQueryGetUser";
 import LogOutModal from "../global/LogoutModal";
 
 export function SidebarUser() {
-    const { isMobile } = useSidebar();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const { data: user } = useQueryGetUser();
+
+    const name = user?.name || "Admin User";
+    const email = user?.email || "admin@portfolio.dev";
+    const initials = name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
 
     return (
         <>
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton
-                        size="lg"
-                        onClick={() => setOpen(true)}
-                        className="data-[state=open]:bg-sidebar-accent  data-[state=open]:text-sidebar-accent-foreground "
-                    >
-                        <div className="flex items-center w-full px-3 py-2 rounded-md gap-2">
-                            <IconLogout />
-                            <span>Logout</span>
+                    <div className="flex items-center justify-between p-2 rounded-xl bg-sidebar-accent/40 border border-sidebar-border/60 gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                            <Avatar className="size-8 rounded-lg ring-1 ring-border shrink-0">
+                                <AvatarImage src={user?.image ?? undefined} alt={name} />
+                                <AvatarFallback className="text-xs font-semibold bg-primary text-primary-foreground">
+                                    {initials}
+                                </AvatarFallback>
+                            </Avatar>
+
+                            <div className="grid flex-1 text-left text-xs leading-tight min-w-0">
+                                <span className="truncate font-semibold text-foreground">
+                                    {name}
+                                </span>
+                                <span className="truncate text-[10px] font-mono text-muted-foreground">
+                                    {email}
+                                </span>
+                            </div>
                         </div>
-                    </SidebarMenuButton>
+
+                        <SidebarMenuButton
+                            size="sm"
+                            onClick={() => setOpen(true)}
+                            className="size-8 p-0 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors flex items-center justify-center"
+                            title="Sign out of Admin CMS"
+                        >
+                            <IconLogout className="size-4" />
+                        </SidebarMenuButton>
+                    </div>
+
                     <LogOutModal
                         isOpen={open}
                         closeModal={() => setOpen(false)}
