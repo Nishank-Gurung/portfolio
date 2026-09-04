@@ -7,6 +7,7 @@ import {
     IconUser,
     IconBook,
     IconArticle,
+    IconGitCommit,
 } from "@tabler/icons-react";
 
 export const TOKEN_NAME = "auth_token";
@@ -62,7 +63,7 @@ export const AdminSideBarLinks: SidebarNavLinks[] = [
     },
     {
         title: "GitPage",
-        icon: IconSocial,
+        icon: IconGitCommit,
         url: "/admin/gitpage",
     }
 ];
