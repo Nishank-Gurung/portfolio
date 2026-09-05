@@ -4,13 +4,15 @@ import { imagekit } from "@/lib/imagekit";
 import { userSchema, userSchemaType } from "@/lib/schemas";
 import { getErrorMessage } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import { verifyAuth } from "@/lib/auth";
 
 export const updateUser = async (userInfo: userSchemaType) => {
     let uploadFileId: string | null = null;
     let uploadResumeFileId: string | null = null;
     try {
+        const session = await verifyAuth();
         const userData = await prisma.user.findUnique({
-            where: { id: 1 },
+            where: { id: session.id },
         });
 
         if (!userData) {

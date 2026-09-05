@@ -4,10 +4,12 @@ import prisma from "@/lib/db";
 import { imagekit } from "@/lib/imagekit";
 import { socialMediaSchema, socialMediaSchemaType } from "@/lib/schemas";
 import { getErrorMessage } from "@/lib/utils";
+import { verifyAuth } from "@/lib/auth";
 
 export const createSocial = async (socialData: socialMediaSchemaType) => {
     let uploadedFileId: string | null = null;
     try {
+        await verifyAuth();
         const result = socialMediaSchema.safeParse(socialData);
         if (!result.success) {
             const first = result.error.issues[0];
@@ -75,6 +77,7 @@ export const createSocial = async (socialData: socialMediaSchemaType) => {
 
 export const deleteSocial = async (id: number) => {
     try {
+        await verifyAuth();
         const social = await prisma.socialMedia.findUnique({
             where: { id },
         });
@@ -122,6 +125,7 @@ interface UpdateSocialProps {
 export const updateSocial = async ({ id, socialData }: UpdateSocialProps) => {
     let newUploadedFileId: string | null = null;
     try {
+        await verifyAuth();
         const existingSocial = await prisma.socialMedia.findUnique({
             where: { id },
         });

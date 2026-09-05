@@ -3,9 +3,11 @@
 import prisma from "@/lib/db";
 import { experienceSchema, experienceSchemaType } from "@/lib/schemas";
 import { getErrorMessage } from "@/lib/utils";
+import { verifyAuth } from "@/lib/auth";
 
 export const createWork = async (workData: experienceSchemaType) => {
     try {
+        await verifyAuth();
         const result = experienceSchema.safeParse(workData);
 
         if (!result.success) {
@@ -36,6 +38,7 @@ export const createWork = async (workData: experienceSchemaType) => {
 
 export const deleteWork = async (id: number) => {
     try {
+        await verifyAuth();
         await prisma.workExperience.delete({
             where: { id },
         });
@@ -60,6 +63,7 @@ export const updateWork = async (
     { id, workData }: UpdateWorkProps
 ) => {
     try {
+        await verifyAuth();
         const existingWork = await prisma.workExperience.findUnique({
             where: { id },
         });

@@ -4,10 +4,12 @@ import prisma from "@/lib/db";
 import { imagekit } from "@/lib/imagekit";
 import { postSchema, postSchemaType } from "@/lib/schemas";
 import { generateSlug, getErrorMessage } from "@/lib/utils";
+import { verifyAuth } from "@/lib/auth";
 
 export const createBlog = async (postData: postSchemaType) => {
     let uploadedFileId: string | null = null;
     try {
+        const session = await verifyAuth();
         const result = postSchema.safeParse(postData);
         if (!result.success) {
             const first = result.error.issues[0];
@@ -43,7 +45,7 @@ export const createBlog = async (postData: postSchemaType) => {
                     slug: generateSlug(data.title),
                     publishedAt:
                         data.status === "PUBLISHED" ? new Date() : null,
-                    authorId: 1,
+                    authorId: session.id,
                 },
             });
             return updated;
@@ -76,6 +78,7 @@ export const createBlog = async (postData: postSchemaType) => {
 
 export const deleteBlog = async (id: number) => {
     try {
+        await verifyAuth();
         const blog = await prisma.post.findUnique({
             where: { id },
         });
@@ -121,6 +124,7 @@ export const updateBlog = async (
 ) => {
     let newUploadedFileId: string | null = null;
     try {
+        await verifyAuth();
         const result = postSchema.safeParse(blogData);
         if (!result.success) {
             const first = result.error.issues[0];

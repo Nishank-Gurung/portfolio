@@ -4,10 +4,12 @@ import prisma from "@/lib/db";
 import { imagekit } from "@/lib/imagekit";
 import { projectSchema, projectSchemaType } from "@/lib/schemas";
 import { generateSlug, getErrorMessage } from "@/lib/utils";
+import { verifyAuth } from "@/lib/auth";
 
 export const createProject = async (projectData: projectSchemaType) => {
     let uploadedFileId: string | null = null;
     try {
+        await verifyAuth();
         const result = projectSchema.safeParse(projectData);
         if (!result.success) {
             const first = result.error.issues[0];
@@ -71,6 +73,7 @@ export const createProject = async (projectData: projectSchemaType) => {
 
 export const deleteProject = async (id: number) => {
     try {
+        await verifyAuth();
         const project = await prisma.project.findUnique({
             where: { id },
         });
@@ -111,6 +114,7 @@ export const updateProject = async (
 ) => {
     let uploadedFileId: string | null = null;
     try {
+        await verifyAuth();
         const existingProject = await prisma.project.findUnique({
             where: { id },
         });

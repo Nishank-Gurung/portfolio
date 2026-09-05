@@ -4,10 +4,12 @@ import prisma from "@/lib/db";
 import { imagekit } from "@/lib/imagekit";
 import { skillSchema, skillSchemaType } from "@/lib/schemas";
 import { getErrorMessage } from "@/lib/utils";
+import { verifyAuth } from "@/lib/auth";
 
 export const createSkill = async (skillData: skillSchemaType) => {
     let uploadedFileId: string | null = null;
     try {
+        await verifyAuth();
         const result = skillSchema.safeParse(skillData);
         if (!result.success) {
             const first = result.error.issues[0];
@@ -66,6 +68,7 @@ export const createSkill = async (skillData: skillSchemaType) => {
 
 export const deleteSkill = async (id: number) => {
     try {
+        await verifyAuth();
         const skill = await prisma.skill.findUnique({
             where: { id },
         });
@@ -101,6 +104,7 @@ interface UpdateSkillProps {
 export const updateSkill = async ({ id, skillData }: UpdateSkillProps) => {
     let uploadedFileId: string | null = null;
     try {
+        await verifyAuth();
         const existingSkill = await prisma.skill.findUnique({
             where: { id },
         });

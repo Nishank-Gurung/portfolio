@@ -3,9 +3,11 @@
 import prisma from "@/lib/db";
 import { educationSchema, educationSchemaType } from "@/lib/schemas";
 import { getErrorMessage } from "@/lib/utils";
+import { verifyAuth } from "@/lib/auth";
 
 export const createEducation = async (educationData: educationSchemaType) => {
     try {
+        await verifyAuth();
         const result = educationSchema.safeParse(educationData);
         if (!result.success) {
             const first = result.error.issues[0];
@@ -45,6 +47,7 @@ export const createEducation = async (educationData: educationSchemaType) => {
 
 export const deleteEducation = async (id: number) => {
     try {
+        await verifyAuth();
         await prisma.education.delete({
             where: { id },
         });
@@ -69,6 +72,7 @@ export const updateEducation = async (
     { id, educationData }: UpdateEducationProps
 ) => {
     try {
+        await verifyAuth();
         const existingEducation = await prisma.education.findUnique({
             where: { id },
         });

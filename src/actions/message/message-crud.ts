@@ -4,6 +4,7 @@ import prisma from "@/lib/db";
 import { messageSchema, messageSchemaType } from "@/lib/schemas";
 import { getErrorMessage } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import { verifyAuth } from "@/lib/auth";
 
 export const submitMessage = async (input: messageSchemaType) => {
     try {
@@ -45,6 +46,7 @@ export const submitMessage = async (input: messageSchemaType) => {
 
 export const markMessageAsRead = async (id: number, isRead: boolean = true) => {
     try {
+        await verifyAuth();
         const updated = await prisma.message.update({
             where: { id },
             data: { isRead },
@@ -66,6 +68,7 @@ export const markMessageAsRead = async (id: number, isRead: boolean = true) => {
 
 export const deleteMessage = async (id: number) => {
     try {
+        await verifyAuth();
         await prisma.message.delete({
             where: { id },
         });
